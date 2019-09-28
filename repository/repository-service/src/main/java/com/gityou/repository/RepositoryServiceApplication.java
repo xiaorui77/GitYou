@@ -1,4 +1,4 @@
-package com.gityou.user;
+package com.gityou.repository;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,11 +7,11 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan("com.gityou.user.mapper")
-public class UserServiceApplication {
+@MapperScan("com.gityou.repository.mapper")
+public class RepositoryServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UserServiceApplication.class, args);
+        SpringApplication.run(RepositoryServiceApplication.class, args);
     }
 
 }

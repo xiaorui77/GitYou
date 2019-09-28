@@ -2,20 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>GitYou</artifactId>
         <groupId>com.gityou.parent</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.gityou.repository</groupId>
+    <artifactId>repository</artifactId>
+    <packaging>pom</packaging>
+
+    <name>repository-service</name>
+    <description>Repository module of GitYou project for Spring Boot</description>
     <modules>
-        <module>user-service</module>
-        <module>user-interface</module>
+        <module>repository-interface</module>
     </modules>
 
-    <groupId>com.gityou.user</groupId>
-    <artifactId>user</artifactId>
-    <packaging>pom</packaging>
 
 </project>
