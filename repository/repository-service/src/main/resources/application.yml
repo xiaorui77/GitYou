@@ -19,5 +19,9 @@ eureka:
         lease-renewal-interval-in-seconds: 5        # 心跳时间
         lease-expiration-duration-in-seconds: 15    # 过期时间
 
+gityou:
+    jwt:
+        pubKeyPath: D:/tmp/gityou/rsa.pub     # 公钥地址
+        cookieName: user-identity    # cookie的名称
 mybatis:
-    type-aliases-package: com.gityou.repository.pojo
+    type-aliases-package: com.gityou.repository.mapper

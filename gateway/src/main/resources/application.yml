@@ -20,4 +20,21 @@ zuul:
     prefix: /api
     routes:
         user-service: /user/**
-        repository: /repository/**
+        repository-service: /repo/**
+
+    retryable: true     # 重试
+
+    ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
+    host:
+        connect-timeout-millis: 6000
+        socket-timeout-millis: 6000
+
+    sensitive-headers:      # 配置禁止使用的的头信息
+    add-host-header: true
+
+
+ribbon:
+    restclient:
+        enabled: true
+    okhttp:
+        enabled: true

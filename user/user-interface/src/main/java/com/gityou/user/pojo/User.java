@@ -1,7 +1,10 @@
 package com.gityou.user.pojo;
 
+import javax.persistence.Table;
 import java.sql.Timestamp;
 
+
+@Table(name = "user")
 public class User {
     private int id;
     private String username;
