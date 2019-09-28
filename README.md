@@ -2,6 +2,10 @@
 GitYou是一个基于JGit的开源的Java Git解决方案, 用于管理, 查看和管理Git存储库 
 
 
+### 项目结构
+* **register** Spring Cloud Eureka port: 7050
+
+
 ### 运行时需求 
 GitYou需要Java 8 Runtime Environment
 

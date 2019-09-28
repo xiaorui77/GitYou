@@ -1,0 +1,23 @@
+# port
+server:
+    port: 7051
+
+spring:
+    application:
+        name: gateway
+
+eureka:
+    client:
+        service-url:
+            defaultZone: http://127.0.0.1:7050/eureka
+        registry-fetch-interval-seconds: 5
+
+    instance:
+        lease-renewal-interval-in-seconds: 3 # 心跳时间
+        lease-expiration-duration-in-seconds: 10 # 过期时间
+
+zuul:
+    prefix: /api
+    routes:
+        user-service: /user/**
+        repository: /repository/**
