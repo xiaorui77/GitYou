@@ -13,6 +13,9 @@ public class Repository {
     private String name;
     private String description;
     private Byte secret;
+    private Integer type;
+    private Integer language;
+    private Timestamp updateTime;
     private Timestamp createTime;
 
     public Long getId() {
@@ -53,6 +56,30 @@ public class Repository {
 
     public void setSecret(Byte secret) {
         this.secret = secret;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Integer getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Integer language) {
+        this.language = language;
+    }
+
+    public Timestamp getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
     }
 
     public Timestamp getCreateTime() {
