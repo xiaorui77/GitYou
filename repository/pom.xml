@@ -12,12 +12,13 @@
     <groupId>com.gityou.repository</groupId>
     <artifactId>repository</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>repository-interface</module>
+        <module>repository-service</module>
+    </modules>
 
     <name>repository-service</name>
     <description>Repository module of GitYou project for Spring Boot</description>
-    <modules>
-        <module>repository-interface</module>
-    </modules>
 
 
 </project>

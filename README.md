@@ -4,6 +4,15 @@ GitYou是一个基于JGit的开源的Java Git解决方案, 用于管理, 查看�
 
 ### 项目结构
 * **register** Spring Cloud Eureka port: 7050
+* gateway Spring Cloud Zuul port:7051
+* User-service port: 7071
+* Repository-service port: 7072
+* Git-service  port:7081
+
+
+### 功能介绍
+* web端
+* git端: 支持HTTP协议
 
 
 ### 运行时需求 
