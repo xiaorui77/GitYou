@@ -12,6 +12,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.gityou.common</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.gityou.user</groupId>
             <artifactId>user-interface</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -47,6 +52,21 @@
             <artifactId>mapper-spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- tools-->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.12</version>
+        </dependency>
+
+        <!-- Spring Boot Configuration Processer -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

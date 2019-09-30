@@ -1,8 +1,9 @@
 package com.gityou.common.entity;
 
-public class RequestResult {
+public class RequestResult<T> {
     private Integer code;
     private String msg;
+    private T data;
 
     public RequestResult() {
     }
@@ -14,6 +15,12 @@ public class RequestResult {
     public RequestResult(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
+    }
+
+    public RequestResult(Integer code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
     }
 
     public static RequestResult ok() {
@@ -32,6 +39,7 @@ public class RequestResult {
         return new RequestResult(code, msg);
     }
 
+
     public Integer getCode() {
         return code;
     }
@@ -47,6 +55,15 @@ public class RequestResult {
 
     public RequestResult RequestResult(String msg) {
         this.msg = msg;
+        return this;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public RequestResult setData(T data) {
+        this.data = data;
         return this;
     }
 }
