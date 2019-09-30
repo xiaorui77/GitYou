@@ -4,6 +4,7 @@ package com.gityou.repository.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gityou.common.entity.PageResult;
+import com.gityou.common.entity.RequestResult;
 import com.gityou.common.entity.UserInfo;
 import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
@@ -69,6 +70,21 @@ public class RepositoryService {
     Repository queryRepository() {
         // Todo
         return new Repository();
+    }
+
+    // 创建仓库
+    public RequestResult createRepository(Repository repository) {
+        // 验证登录
+        UserInfo loginUser = LoginInterceptor.getLoginUser();
+        if (loginUser == null)
+            return RequestResult.build(401, "用户未登录");
+
+        Integer userId = loginUser.getId();
+        if (!userId.equals(repository.getUserId()))
+            return RequestResult.build(401, "登录的用户不一致");
+
+        repositoryMapper.insertSelective(repository);
+        return RequestResult.ok();
     }
 
 }// end

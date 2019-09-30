@@ -25,9 +25,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         // 查询token
         String token = CookieUtils.getCookieValue(request, properties.getCookieName());
         if (StringUtils.isBlank(token)) {
-            // 未登录,返回401
+            // 未登录, 允许未登录
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return false;
+            return true;
         }
         // 有token，查询用户信息
         try {
@@ -37,11 +37,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             tl.set(user);
             return true;
         } catch (Exception e) {
-            // 抛出异常，证明未登录,返回401
+            // 抛出异常，证明未登录, 继续
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return false;
+            return true;
         }
-
     }
 
     @Override

@@ -1,13 +1,11 @@
 package com.gityou.repository.controller;
 
 import com.gityou.common.entity.PageResult;
+import com.gityou.common.entity.RequestResult;
 import com.gityou.repository.pojo.Repository;
 import com.gityou.repository.service.RepositoryService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -62,4 +60,16 @@ public class RepositoryController {
         return ResponseEntity.notFound().build();
     }
 
-}
+    /*
+     * 创建 Git 仓库
+     * */
+    @PostMapping
+    public ResponseEntity<RequestResult> createRepository(Repository repository) {
+        RequestResult result = repoService.createRepository(repository);
+        if (result.getCode() == 200)
+            return ResponseEntity.ok(result);
+        else
+            return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+}// end
