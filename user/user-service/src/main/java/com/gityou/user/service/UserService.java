@@ -13,8 +13,8 @@ public class UserService {
     private UserMapper userMapper;
 
 
-    // 验证User
-    public User authUser(String username, String password) {
+    // 登录验证 User 每次都要修改salt? 暂时保留多地方登录
+    public User loginUser(String username, String password) {
         User user = new User();
         user.setUsername(username);
 

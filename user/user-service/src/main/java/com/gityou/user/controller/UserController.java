@@ -25,7 +25,7 @@ public class UserController {
      * */
     @PostMapping("auth")
     public ResponseEntity<User> authUser(String username, String password) {
-        User user = userService.authUser(username, password);
+        User user = userService.loginUser(username, password);
         if (user == null)
             return ResponseEntity.badRequest().build();
         else if (user.getPassword() == null)

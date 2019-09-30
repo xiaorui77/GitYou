@@ -7,11 +7,9 @@ import com.gityou.common.utils.JwtUtils;
 import com.gityou.user.config.AuthProperties;
 import com.gityou.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 @Service
-@EnableConfigurationProperties(AuthProperties.class)
 public class AuthService {
     @Autowired
     private UserService userService;
@@ -22,7 +20,7 @@ public class AuthService {
 
     public RequestResult<User> authentication(String username, String password) {
 
-        User user = this.userService.authUser(username, password);
+        User user = this.userService.loginUser(username, password);
 
         if (user == null)
             return new RequestResult<>(400, "用户不存在");
