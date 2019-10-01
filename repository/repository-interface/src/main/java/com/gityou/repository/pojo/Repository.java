@@ -10,6 +10,7 @@ public class Repository {
     @Id
     private Long id;
     private Integer userId;
+    private String username;
     private String name;
     private String description;
     private Byte secret;
@@ -32,6 +33,14 @@ public class Repository {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
