@@ -2,13 +2,15 @@ package com.gityou.user.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
 
 @Table(name = "user")
 public class User {
-    private int id;
+    @Id
+    private Integer id;
     private String username;
     @JsonIgnore
     private String password;
@@ -18,11 +20,11 @@ public class User {
     private Timestamp createTime;
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

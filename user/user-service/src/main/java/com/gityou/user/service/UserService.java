@@ -15,10 +15,10 @@ public class UserService {
 
     // 登录验证 User 每次都要修改salt? 暂时保留多地方登录
     public User loginUser(String username, String password) {
-        User user = new User();
-        user.setUsername(username);
+        User record = new User();
+        record.setUsername(username);
 
-        User record = userMapper.selectOne(user);
+        record = userMapper.selectOne(record);
         if (record == null)
             return null;
 

@@ -13,7 +13,7 @@ public class Repository {
     private String username;
     private String name;
     private String description;
-    private Byte secret;
+    private Byte privacy;
     private Integer type;
     private Integer language;
     private Timestamp updateTime;
@@ -59,12 +59,12 @@ public class Repository {
         this.description = description;
     }
 
-    public Byte getSecret() {
-        return secret;
+    public Byte getPrivacy() {
+        return privacy;
     }
 
-    public void setSecret(Byte secret) {
-        this.secret = secret;
+    public void setPrivacy(Byte privacy) {
+        this.privacy = privacy;
     }
 
     public Integer getType() {
