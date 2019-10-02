@@ -60,6 +60,18 @@ public class RepositoryController {
         return ResponseEntity.notFound().build();
     }
 
+    /* 根据name查询单个 Repository
+     * */
+    @GetMapping("name")
+    public ResponseEntity<Repository> queryRepositoryByName(@RequestParam String name) {
+        // Todo
+        Repository result = repoService.queryRepositoryByName(name);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
+
     /*
      * 创建 Git 仓库
      * */

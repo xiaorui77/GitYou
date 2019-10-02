@@ -87,4 +87,12 @@ public class RepositoryService {
         return RequestResult.ok();
     }
 
+    // 查询信息
+    public Repository queryRepositoryByName(String name) {
+        Example example = new Example(Repository.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("name", name);
+        return repositoryMapper.selectOneByExample(example);
+    }
+
 }// end
