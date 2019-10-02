@@ -53,6 +53,7 @@ public class RepositoryController {
 
     /*
      * 根据id查询单个 Repository
+     * 详细信息
      * */
     @GetMapping
     public ResponseEntity<Repository> queryRepository(@RequestParam Long id) {
@@ -60,12 +61,13 @@ public class RepositoryController {
         return ResponseEntity.notFound().build();
     }
 
-    /* 根据name查询单个 Repository
+    /* 根据 user, name查询单个 Repository
+     * 自己的仓库
      * */
     @GetMapping("name")
-    public ResponseEntity<Repository> queryRepositoryByName(@RequestParam String name) {
+    public ResponseEntity<Repository> queryRepositoryByName(String user, String name) {
         // Todo
-        Repository result = repoService.queryRepositoryByName(name);
+        Repository result = repoService.queryRepositoryByName(user, name);
         if (result == null)
             return ResponseEntity.notFound().build();
         else
@@ -78,6 +80,17 @@ public class RepositoryController {
     @PostMapping
     public ResponseEntity<RequestResult> createRepository(Repository repository) {
         RequestResult result = repoService.createRepository(repository);
+        if (result.getCode() == 200)
+            return ResponseEntity.ok(result);
+        else
+            return ResponseEntity.status(result.getCode()).body(result);
+    }
+
+    /* 导入 仓库
+     * */
+    @PostMapping("import")
+    public ResponseEntity<RequestResult> importRepository(Repository repository, String clone) {
+        RequestResult result = repoService.importRepository(repository, clone);
         if (result.getCode() == 200)
             return ResponseEntity.ok(result);
         else

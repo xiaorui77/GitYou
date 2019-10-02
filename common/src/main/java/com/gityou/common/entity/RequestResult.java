@@ -27,6 +27,10 @@ public class RequestResult<T> {
         return new RequestResult(200, "请求成功");
     }
 
+    public static RequestResult ok(Object data) {
+        return new RequestResult(200, "请求成功").setData(data);
+    }
+
     public static RequestResult build() {
         return new RequestResult();
     }

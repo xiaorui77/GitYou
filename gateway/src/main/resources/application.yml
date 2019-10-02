@@ -26,8 +26,8 @@ zuul:
 
     ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
     host:
-        connect-timeout-millis: 6000
-        socket-timeout-millis: 6000
+        connect-timeout-millis: 4000
+        socket-timeout-millis: 4000
 
     sensitive-headers:      # 配置禁止使用的的头信息
     add-host-header: true
@@ -38,3 +38,15 @@ ribbon:
         enabled: true
     okhttp:
         enabled: true
+
+    ReadTimeout: 10000   # 请求处理的超时时间
+
+
+hystrix:
+    command:
+        default:
+            execution:
+                isolation:
+                    thread:
+                        timeoutInMilliseconds: 10000
+

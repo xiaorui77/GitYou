@@ -15,38 +15,44 @@ import java.util.List;
 @Repository
 public class GitUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitUtils.class);
-    private static StringBuilder basePath = new StringBuilder("D:\\tmp\\gityou\\repository\\");
+    private static final String basePath = "D:\\tmp\\gityou\\repository\\";
 
     // 新建仓库
-    public void createNewRepository(String user, String name) {
-        StringBuilder temp = basePath.append(user).append("\\").append(name);
+    public boolean createNewRepository(String user, String name) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git");
         File repoPath = new File(temp.toString());
 
         // 创建仓库
         try (Git git = Git.init().setBare(false).setDirectory(repoPath).call()) {
             LOGGER.info("成功创建仓库: " + git.getRepository().getDirectory());
+            return true;
         } catch (GitAPIException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
     // 通过Url克隆仓库
-    public void cloneRepository(String user, String name, String url) {
-        StringBuilder temp = basePath.append(user).append("\\").append(name);
+    public boolean cloneRepository(String user, String name, String url) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git");
         File repoPath = new File(temp.toString());
 
         try (Git git = Git.cloneRepository().setURI(url)
                 .setCloneAllBranches(true)  // 克隆所有分支
-                .setDirectory(repoPath).call()) {
+                .setDirectory(repoPath)
+                .setTimeout(5).call()) {
             LOGGER.info("成功创建仓库: " + git.getRepository().getDirectory());
-        } catch (GitAPIException e) {
-            e.printStackTrace();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
+
     // 列出所有分支(非远程)
     public List<String> getBranch(String user, String name) {
-        StringBuilder temp = basePath.append(user).append("\\").append(name).append(".git");
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git");
         File localPath = new File(temp.toString());
 
         try (Git git = Git.open(localPath)) {

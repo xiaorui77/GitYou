@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.gityou.common.entity.PageResult;
 import com.gityou.common.entity.RequestResult;
 import com.gityou.common.entity.UserInfo;
+import com.gityou.repository.git.GitUtils;
 import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.pojo.Repository;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,10 +22,13 @@ import java.util.Objects;
 @Service
 public class RepositoryService {
     private final RepositoryMapper repositoryMapper;
+    private final GitUtils gitUtils;
 
-    public RepositoryService(RepositoryMapper repositoryMapper) {
+    public RepositoryService(RepositoryMapper repositoryMapper, GitUtils gitUtils) {
         this.repositoryMapper = repositoryMapper;
+        this.gitUtils = gitUtils;
     }
+
 
     // 分页查询
     public PageResult<Repository> queryRepos(Integer userId, Integer page, Integer type, Integer language, String keyword) {
@@ -83,16 +88,76 @@ public class RepositoryService {
         if (!userId.equals(repository.getUserId()))
             return RequestResult.build(401, "登录的用户不一致");
 
-        repositoryMapper.insertSelective(repository);
-        return RequestResult.ok();
+        // 判读name不能为空
+        if (StringUtils.isBlank(repository.getName()) || repository.getName().length() > 50)
+            return RequestResult.build(401, "仓库名不合法");
+
+        // name是否可用
+        if (hasName(repository.getName()))
+            return RequestResult.build(401, "仓库已存在");
+
+
+        repository.setUsername(loginUser.getUsername());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        repository.setCreateTime(timestamp);
+        repository.setUpdateTime(timestamp);
+
+        if (gitUtils.createNewRepository(repository.getUsername(), repository.getName())) {
+            repositoryMapper.insertSelective(repository);
+            return RequestResult.ok(repository);
+        } else {
+            return RequestResult.build(400, "创建失败");
+        }
+
     }
 
-    // 查询信息
-    public Repository queryRepositoryByName(String name) {
+    // 导入仓库
+    public RequestResult importRepository(Repository repository, String clone) {
+        // 验证登录
+        UserInfo loginUser = LoginInterceptor.getLoginUser();
+        if (loginUser == null)
+            return RequestResult.build(401, "用户未登录");
+
+        Integer userId = loginUser.getId();
+        if (!userId.equals(repository.getUserId()))
+            return RequestResult.build(401, "登录的用户不一致");
+
+        // 判读name不能为空
+        if (StringUtils.isBlank(repository.getName()) || repository.getName().length() > 50)
+            return RequestResult.build(401, "仓库名不合法");
+
+        // name是否可用
+        if (hasName(repository.getName()))
+            return RequestResult.build(401, "仓库已存在");
+
+
+        repository.setUsername(loginUser.getUsername());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        repository.setCreateTime(timestamp);
+        repository.setUpdateTime(timestamp);
+
+        if (gitUtils.cloneRepository(repository.getUsername(), repository.getName(), clone)) {
+            repositoryMapper.insertSelective(repository);
+            return RequestResult.ok(repository);
+        } else {
+            return RequestResult.build(400, "导入仓库失败");
+        }
+
+    }
+
+
+    // 查询Repository 基本信息
+    public Repository queryRepositoryByName(String user, String name) {
         Example example = new Example(Repository.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username", user);
         criteria.andEqualTo("name", name);
         return repositoryMapper.selectOneByExample(example);
+    }
+
+    // 是否已经存在Repository
+    public Boolean hasName(String name) {
+        return name.equals(repositoryMapper.hasName(name));
     }
 
 }// end
