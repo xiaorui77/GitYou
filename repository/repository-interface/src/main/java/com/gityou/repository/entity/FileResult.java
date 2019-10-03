@@ -4,6 +4,7 @@ package com.gityou.repository.entity;
 public class FileResult {
     private String name;
     private Boolean folder;
+    private String commit;  // 提交号
     private String message; // 最后一次提交信息
     private Integer time;  // 最后一次提交时间
 
@@ -21,6 +22,14 @@ public class FileResult {
 
     public void setFolder(Boolean folder) {
         this.folder = folder;
+    }
+
+    public String getCommit() {
+        return commit;
+    }
+
+    public void setCommit(String commit) {
+        this.commit = commit;
     }
 
     public String getMessage() {

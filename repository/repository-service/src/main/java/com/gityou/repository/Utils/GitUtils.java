@@ -95,6 +95,7 @@ public class GitUtils {
 
                 Iterable<RevCommit> commit = git.log().addPath(pathModel.path).setMaxCount(1).call();
                 commit.forEach(e -> {
+                    file.setCommit(e.getName());
                     file.setMessage(e.getShortMessage());
                     file.setTime(e.getCommitTime());
                 });
@@ -112,6 +113,7 @@ public class GitUtils {
     public CommitResult lastCommit(String user, String name) {
         StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
         File localPath = new File(temp.toString());
+
 
         try (Git git = Git.open(localPath)) {
             Iterable<RevCommit> revCommits = git.log().setMaxCount(1).call();
