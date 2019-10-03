@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -21,6 +24,20 @@ public class CommitController {
     @GetMapping("last")
     public ResponseEntity<CommitResult> lastCommit(String user, String name) {
         CommitResult result = commitService.lastCommit(user, name);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 获取提交
+     */
+    @GetMapping("list")
+    public ResponseEntity<List> commitList(String user, String name,
+                                           @RequestParam(defaultValue = "master") String branch,
+                                           @RequestParam(defaultValue = "1") Integer page) {
+        List result = commitService.commitList(user, name, branch, page);
         if (result == null)
             return ResponseEntity.notFound().build();
         else

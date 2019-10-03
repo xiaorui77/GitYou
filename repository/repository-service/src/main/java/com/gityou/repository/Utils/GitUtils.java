@@ -130,4 +130,29 @@ public class GitUtils {
         return null;
     }
 
+    // commit列表
+    public List commitList(String user, String name, String branch, Integer page) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        File localPath = new File(temp.toString());
+
+        try (Git git = Git.open(localPath)) {
+            List<CommitResult> result = new ArrayList<>();
+            List<RevCommit> revCommits = JGitUtils.getRevLog(git.getRepository(), branch, (page - 1) * 28, 28);
+            //Iterable<RevCommit> revCommits = git.log().set.setSkip().setMaxCount(28).call(); // 每页28
+
+            revCommits.forEach(e -> {
+                CommitResult c = new CommitResult();
+                c.setName(e.getName());
+                c.setMessage(e.getShortMessage());
+                c.setTime(e.getCommitTime());
+                result.add(c);
+            });
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }// end

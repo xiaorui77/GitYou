@@ -5,6 +5,8 @@ import com.gityou.repository.entity.CommitResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class CommitService {
@@ -17,5 +19,11 @@ public class CommitService {
     public CommitResult lastCommit(String user, String name) {
         return gitUtils.lastCommit(user, name);
     }
+
+    // commit列表
+    public List commitList(String user, String name, String branch, Integer page) {
+        return gitUtils.commitList(user, name, branch, page);
+    }
+
 
 }// end
