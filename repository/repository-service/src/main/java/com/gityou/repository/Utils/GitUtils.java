@@ -1,5 +1,6 @@
 package com.gityou.repository.Utils;
 
+import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.entity.FileResult;
 import com.gityou.repository.gitblit.model.PathModel;
 import org.eclipse.jgit.api.Git;
@@ -107,5 +108,24 @@ public class GitUtils {
         return null;
     }
 
+    // 最近一次提交
+    public CommitResult lastCommit(String user, String name) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        File localPath = new File(temp.toString());
+
+        try (Git git = Git.open(localPath)) {
+            Iterable<RevCommit> revCommits = git.log().setMaxCount(1).call();
+            CommitResult result = new CommitResult();
+            revCommits.forEach(e -> {
+                result.setName(e.getName());
+                result.setMessage(e.getShortMessage());
+                result.setTime(e.getCommitTime());
+            });
+            return result;
+        } catch (IOException | GitAPIException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }// end
