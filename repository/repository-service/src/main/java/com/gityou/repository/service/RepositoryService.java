@@ -31,7 +31,7 @@ public class RepositoryService {
 
 
     // 分页查询
-    public PageResult<Repository> queryRepos(Integer userId, Integer page, Integer type, Integer language, String keyword) {
+    public PageResult<Repository> queryRepos(String user, Integer page, Integer type, Integer language, String keyword) {
         UserInfo userInfo = LoginInterceptor.getLoginUser();
 
         // 分页
@@ -41,12 +41,12 @@ public class RepositoryService {
         Example.Criteria criteria = example.createCriteria();
 
         // 查找user
-        criteria.andEqualTo("userId", userId);
+        criteria.andEqualTo("username", user);
 
         // type public private过滤
         if (type == 1)
             criteria.andEqualTo("secret", 0);
-        else if (type == 2 && userInfo != null && Objects.equals(userInfo.getId(), userId))
+        else if (type == 2 && userInfo != null && Objects.equals(userInfo.getUsername(), user))
             criteria.andEqualTo("secret", 1);
 
         if (type > 2)

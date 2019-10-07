@@ -27,12 +27,12 @@ public class RepositoryController {
      * */
     @GetMapping("page")
     public ResponseEntity<PageResult<Repository>> queryRepos(
-            @RequestParam Integer userId,
+            @RequestParam String user,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "0") Integer type,
             @RequestParam(defaultValue = "0") Integer language,
             @RequestParam(required = false) String keyword) {
-        PageResult<Repository> repositories = repoService.queryRepos(userId, page, type, language, keyword);
+        PageResult<Repository> repositories = repoService.queryRepos(user, page, type, language, keyword);
         if (repositories == null)
             return ResponseEntity.notFound().build();
         else
