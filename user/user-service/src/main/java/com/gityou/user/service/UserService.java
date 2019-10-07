@@ -32,4 +32,16 @@ public class UserService {
         }
     }
 
+    // 根据 id获取user信息
+    public User queryUserByEmail(Integer id) {
+        return userMapper.selectByPrimaryKey(id);
+    }
+
+    // 根据email获取user信息
+    public User queryUserByEmail(String email) {
+        User user = new User();
+        user.setEmail(email);
+        return userMapper.selectOne(user);
+    }
+
 }// end

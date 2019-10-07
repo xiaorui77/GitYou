@@ -3,9 +3,8 @@ package com.gityou.user.controller;
 import com.gityou.user.pojo.User;
 import com.gityou.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,20 +17,30 @@ public class UserController {
     @Autowired
     UserService userService;
 
+
     /*
-     * 验证 User
-     * 用户不存在: 返回null
-     * 只有username password为空: 密码错误
+     * 根据id获取用户信息
      * */
-    @PostMapping("auth")
-    public ResponseEntity<User> authUser(String username, String password) {
-        User user = userService.loginUser(username, password);
+    @GetMapping("query")
+    public ResponseEntity<User> queryUser(Integer id) {
+        User user = userService.queryUserByEmail(id);
         if (user == null)
-            return ResponseEntity.badRequest().build();
-        else if (user.getPassword() == null)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.notFound().build();
         else
             return ResponseEntity.ok(user);
     }
+
+    /*
+     * 根据email获取用户信息
+     * */
+    @GetMapping("query")
+    public ResponseEntity<User> queryUser(String email) {
+        User user = userService.queryUserByEmail(email);
+        if (user == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(user);
+    }
+
 
 }// end

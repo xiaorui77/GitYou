@@ -47,7 +47,6 @@ public class AuthController {
             return ResponseEntity.status(result.getCode()).body(new RequestResult<>(result.getCode(), result.getMsg()));
     }
 
-
     /*
      * 验证
      * */
