@@ -1,8 +1,10 @@
 package com.gityou.repository.Utils;
 
+import com.gityou.repository.entity.BranchResult;
 import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.entity.FileResult;
 import com.gityou.repository.gitblit.model.PathModel;
+import com.gityou.repository.gitblit.model.RefModel;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
@@ -74,6 +76,29 @@ public class GitUtils {
         return null;
     }
 
+    public List<BranchResult> branchList(String user, String name) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        File localPath = new File(temp.toString());
+
+        try {
+            FileRepository repository = new FileRepository(localPath);
+            List<RefModel> localBranches = JGitUtils.getLocalBranches(repository, false, Integer.MAX_VALUE);
+            List<BranchResult> result = new ArrayList<>(localBranches.size());
+
+            localBranches.forEach(e -> {
+                BranchResult branch = new BranchResult();
+                branch.name = e.displayName;
+                branch.author = e.getAuthorIdent().getEmailAddress();
+                branch.time = Math.toIntExact(e.getDate().getTime() / 1000);
+                result.add(branch);
+            });
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // 列出所有提交
 
     // 列出文件
@@ -119,6 +144,7 @@ public class GitUtils {
             Iterable<RevCommit> revCommits = git.log().setMaxCount(1).call();
             CommitResult result = new CommitResult();
             revCommits.forEach(e -> {
+                result.setEmail(e.getCommitterIdent().getEmailAddress());
                 result.setName(e.getName());
                 result.setMessage(e.getShortMessage());
                 result.setTime(e.getCommitTime());
@@ -142,6 +168,7 @@ public class GitUtils {
 
             revCommits.forEach(e -> {
                 CommitResult c = new CommitResult();
+                c.setEmail(e.getAuthorIdent().getEmailAddress());
                 c.setName(e.getName());
                 c.setMessage(e.getShortMessage());
                 c.setTime(e.getCommitTime());
