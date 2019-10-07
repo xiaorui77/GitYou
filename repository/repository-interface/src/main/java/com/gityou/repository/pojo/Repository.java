@@ -16,6 +16,7 @@ public class Repository {
     private Byte privacy;
     private Integer type;
     private Integer language;
+    private String defaultBranch;
     private Timestamp updateTime;
     private Timestamp createTime;
 
@@ -81,6 +82,14 @@ public class Repository {
 
     public void setLanguage(Integer language) {
         this.language = language;
+    }
+
+    public String getDefaultBranch() {
+        return defaultBranch;
+    }
+
+    public void setDefaultBranch(String defaultBranch) {
+        this.defaultBranch = defaultBranch;
     }
 
     public Timestamp getUpdateTime() {

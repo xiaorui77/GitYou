@@ -66,7 +66,6 @@ public class RepositoryController {
      * */
     @GetMapping("name")
     public ResponseEntity<Repository> queryRepositoryByName(String user, String name) {
-        // Todo
         Repository result = repoService.queryRepositoryByName(user, name);
         if (result == null)
             return ResponseEntity.notFound().build();
