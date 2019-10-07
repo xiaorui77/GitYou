@@ -4,9 +4,10 @@ import com.gityou.user.pojo.User;
 import com.gityou.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.Set;
 
 /*
  * User Controller
@@ -21,7 +22,7 @@ public class UserController {
     /*
      * 根据id获取用户信息
      * */
-    @GetMapping("query")
+    @GetMapping
     public ResponseEntity<User> queryUser(Integer id) {
         User user = userService.queryUserByEmail(id);
         if (user == null)
@@ -40,6 +41,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         else
             return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("queryUsersByEmail")
+    public ResponseEntity<Map<String, String>> queryUsersByEmail(@RequestBody Set<String> emails) {
+        Map<String, String> users = userService.queryUsersByEmail(emails);
+        if (users == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(users);
     }
 
 

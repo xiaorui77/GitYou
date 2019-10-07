@@ -157,7 +157,7 @@ public class GitUtils {
     }
 
     // commit列表
-    public List commitList(String user, String name, String branch, Integer page) {
+    public List<CommitResult> commitList(String user, String name, String branch, Integer page) {
         StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
         File localPath = new File(temp.toString());
 

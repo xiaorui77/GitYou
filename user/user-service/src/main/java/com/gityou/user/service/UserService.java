@@ -6,6 +6,13 @@ import com.gityou.user.pojo.User;
 import com.gityou.user.util.CodecUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -42,6 +49,22 @@ public class UserService {
         User user = new User();
         user.setEmail(email);
         return userMapper.selectOne(user);
+    }
+
+    @Transactional
+    public Map<String, String> queryUsersByEmail(Set<String> emails) {
+        Map<String, String> result = new HashMap<>();
+
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("email", emails);
+        example.selectProperties("username", "email");
+
+        List<User> users = userMapper.selectByExample(example);
+        users.forEach(e -> {
+            result.put(e.getEmail(), e.getUsername());
+        });
+        return result;
     }
 
 }// end
