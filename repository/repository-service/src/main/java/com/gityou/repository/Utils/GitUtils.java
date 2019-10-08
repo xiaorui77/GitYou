@@ -8,6 +8,7 @@ import com.gityou.repository.gitblit.model.RefModel;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
@@ -102,15 +103,22 @@ public class GitUtils {
     // 列出所有提交
 
     // 列出文件
-    public List<FileResult> fileList(String user, String name) {
+    public List<FileResult> fileList(String user, String name, String branch, String path) {
         StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
         File localPath = new File(temp.toString());
 
         try {
             FileRepository repository = new FileRepository(localPath);
             Git git = new Git(repository);
-            List<PathModel> filesInPath = JGitUtils.getFilesInPath(repository, null, null);
 
+            // 获取提交
+            ObjectId branchId = JGitUtils.getBranch(repository, branch).getObjectId();
+            RevCommit revCommit = repository.parseCommit(branchId);
+
+            // 获取文件列表
+            List<PathModel> filesInPath = JGitUtils.getFilesInPath(repository, path, revCommit);
+
+            // 结果
             List<FileResult> result = new ArrayList<>(filesInPath.size());
 
             for (PathModel pathModel : filesInPath) {

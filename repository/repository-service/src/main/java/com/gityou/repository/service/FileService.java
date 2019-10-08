@@ -15,8 +15,8 @@ public class FileService {
 
 
     // 返回文件列表
-    public List<FileResult> fileList(String user, String name, String path) {
-        return gitUtils.fileList(user, name);
+    public List<FileResult> fileList(String user, String name, String branch, String path) {
+        return gitUtils.fileList(user, name, branch, path);
     }
 
 }// end

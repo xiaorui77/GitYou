@@ -21,8 +21,10 @@ public class FileController {
 
 
     @GetMapping
-    public ResponseEntity<List<FileResult>> fileList(String user, String name, @RequestParam(required = false) String path) {
-        List<FileResult> fileResults = fileService.fileList(user, name, path);
+    public ResponseEntity<List<FileResult>> fileList(
+            String user, String name, @RequestParam(defaultValue = "master") String branch,
+            @RequestParam(required = false) String path) {
+        List<FileResult> fileResults = fileService.fileList(user, name, branch, path);
         if (fileResults == null)
             return ResponseEntity.notFound().build();
         else
