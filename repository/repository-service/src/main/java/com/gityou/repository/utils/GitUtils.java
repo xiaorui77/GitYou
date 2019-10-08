@@ -1,4 +1,4 @@
-package com.gityou.repository.Utils;
+package com.gityou.repository.utils;
 
 import com.gityou.repository.entity.BranchResult;
 import com.gityou.repository.entity.CommitResult;
@@ -111,7 +111,7 @@ public class GitUtils {
             FileRepository repository = new FileRepository(localPath);
             Git git = new Git(repository);
 
-            // 获取提交
+            // 获取branch的提交信息
             ObjectId branchId = JGitUtils.getBranch(repository, branch).getObjectId();
             RevCommit revCommit = repository.parseCommit(branchId);
 
@@ -124,7 +124,7 @@ public class GitUtils {
             for (PathModel pathModel : filesInPath) {
                 FileResult file = new FileResult();
                 file.setName(pathModel.name);
-                file.setFolder(pathModel.isParentPath);
+                file.setFolder(!pathModel.isFile());
 
                 Iterable<RevCommit> commit = git.log().addPath(pathModel.path).setMaxCount(1).call();
                 commit.forEach(e -> {

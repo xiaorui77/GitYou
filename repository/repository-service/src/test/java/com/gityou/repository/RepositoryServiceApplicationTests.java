@@ -1,6 +1,6 @@
 package com.gityou.repository;
 
-import com.gityou.repository.Utils.JGitUtils;
+import com.gityou.repository.utils.JGitUtils;
 import com.gityou.repository.gitblit.model.PathModel;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.ObjectId;

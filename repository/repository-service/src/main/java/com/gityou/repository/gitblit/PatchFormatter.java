@@ -15,7 +15,7 @@
  */
 package com.gityou.repository.gitblit;
 
-import com.gityou.repository.Utils.JGitUtils;
+import com.gityou.repository.utils.JGitUtils;
 import com.gityou.repository.gitblit.utils.StringUtils;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;

@@ -1,7 +1,7 @@
 package com.gityou.repository.service;
 
 
-import com.gityou.repository.Utils.GitUtils;
+import com.gityou.repository.utils.GitUtils;
 import com.gityou.repository.client.UserClient;
 import com.gityou.repository.entity.BranchResult;
 import com.gityou.repository.mapper.BranchMapper;

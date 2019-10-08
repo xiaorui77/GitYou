@@ -1,4 +1,4 @@
-package com.gityou.repository.Utils;
+package com.gityou.repository.utils;
 
 /*
  * Copyright 2011 gitblit.com.

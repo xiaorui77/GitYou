@@ -15,7 +15,7 @@
  */
 package com.gityou.repository.gitblit.utils;
 
-import com.gityou.repository.Utils.JGitUtils;
+import com.gityou.repository.utils.JGitUtils;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import org.slf4j.Logger;

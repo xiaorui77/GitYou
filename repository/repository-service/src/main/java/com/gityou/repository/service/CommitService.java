@@ -1,6 +1,6 @@
 package com.gityou.repository.service;
 
-import com.gityou.repository.Utils.GitUtils;
+import com.gityou.repository.utils.GitUtils;
 import com.gityou.repository.client.UserClient;
 import com.gityou.repository.entity.CommitResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,7 @@ public class CommitService {
     public List<CommitResult> commitList(String user, String name, String branch, Integer page) {
         List<CommitResult> commits = gitUtils.commitList(user, name, branch, page);
 
+        // 获取用户名
         Set<String> emails = new HashSet<>();
         commits.forEach(e -> emails.add(e.getEmail()));
 

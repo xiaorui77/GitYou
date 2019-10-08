@@ -16,7 +16,7 @@
 package com.gityou.repository.gitblit.model;
 
 
-import com.gityou.repository.Utils.JGitUtils;
+import com.gityou.repository.utils.JGitUtils;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.lib.Constants;

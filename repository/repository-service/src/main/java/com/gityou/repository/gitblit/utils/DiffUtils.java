@@ -15,7 +15,7 @@
  */
 package com.gityou.repository.gitblit.utils;
 
-import com.gityou.repository.Utils.JGitUtils;
+import com.gityou.repository.utils.JGitUtils;
 import com.gityou.repository.gitblit.AnnotatedLine;
 import com.gityou.repository.gitblit.DiffStatFormatter;
 import com.gityou.repository.gitblit.GitBlitDiffFormatter;

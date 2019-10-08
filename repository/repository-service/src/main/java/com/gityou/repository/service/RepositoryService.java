@@ -6,7 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.gityou.common.entity.PageResult;
 import com.gityou.common.entity.RequestResult;
 import com.gityou.common.entity.UserInfo;
-import com.gityou.repository.Utils.GitUtils;
+import com.gityou.repository.utils.GitUtils;
 import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.pojo.Repository;
