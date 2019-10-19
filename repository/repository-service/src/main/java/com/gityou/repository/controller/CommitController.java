@@ -1,5 +1,6 @@
 package com.gityou.repository.controller;
 
+import com.gityou.repository.entity.ChangeResult;
 import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.service.CommitService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +45,16 @@ public class CommitController {
             return ResponseEntity.ok(result);
     }
 
+    /*
+     * 某次提交修改的文件列表
+     * */
+    @GetMapping("change")
+    public ResponseEntity changeList(String user, String name, String commit) {
+        List<ChangeResult> result = commitService.changeList(user, name, commit);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
 
 }/// end

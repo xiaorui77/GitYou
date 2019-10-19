@@ -1,8 +1,9 @@
 package com.gityou.repository.service;
 
-import com.gityou.repository.utils.GitUtils;
 import com.gityou.repository.client.UserClient;
+import com.gityou.repository.entity.ChangeResult;
 import com.gityou.repository.entity.CommitResult;
+import com.gityou.repository.utils.GitUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +41,9 @@ public class CommitService {
         return commits;
     }
 
+    // 文件修改列表
+    public List<ChangeResult> changeList(String user, String name, String commit) {
+        return gitUtils.changeList(user, name, commit);
+    }
 
 }// end

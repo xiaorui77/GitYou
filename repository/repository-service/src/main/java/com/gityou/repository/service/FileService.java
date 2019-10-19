@@ -1,6 +1,7 @@
 package com.gityou.repository.service;
 
 
+import com.gityou.repository.entity.ChangeResult;
 import com.gityou.repository.utils.GitUtils;
 import com.gityou.repository.entity.FileResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,5 +19,6 @@ public class FileService {
     public List<FileResult> fileList(String user, String name, String branch, String path) {
         return gitUtils.fileList(user, name, branch, path);
     }
+
 
 }// end

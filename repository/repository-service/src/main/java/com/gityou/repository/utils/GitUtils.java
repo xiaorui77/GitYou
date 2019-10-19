@@ -1,6 +1,7 @@
 package com.gityou.repository.utils;
 
 import com.gityou.repository.entity.BranchResult;
+import com.gityou.repository.entity.ChangeResult;
 import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.entity.FileResult;
 import com.gityou.repository.gitblit.model.PathModel;
@@ -8,6 +9,7 @@ import com.gityou.repository.gitblit.model.RefModel;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -189,5 +191,32 @@ public class GitUtils {
         return null;
     }
 
+    // 文件修改列表
+    public List<ChangeResult> changeList(String user, String name, String commit) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        File localPath = new File(temp.toString());
+
+        try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {
+            AnyObjectId commitId = ObjectId.fromString(commit);
+            RevCommit revCommit = repository.parseCommit(commitId);
+
+            List<PathModel.PathChangeModel> changeFiles = JGitUtils.getFilesInCommit(repository, revCommit);
+
+            List<ChangeResult> result = new ArrayList<>(changeFiles.size());
+            changeFiles.forEach(e -> {
+                ChangeResult file = new ChangeResult();
+                file.setName(e.name);
+                file.setPath(e.path);
+                file.setType(e.changeType.name());
+                file.setInsertions(e.insertions);
+                file.setDeletions(e.deletions);
+                result.add(file);
+            });
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }// end

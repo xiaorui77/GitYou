@@ -31,4 +31,11 @@ public class FileController {
             return ResponseEntity.ok(fileResults);
     }
 
+    @GetMapping("change")
+    public ResponseEntity changeList(String user, String name, @RequestParam(defaultValue = "master") String branch,
+                                     @RequestParam(required = false) String path) {
+        // TODO
+        return ResponseEntity.notFound().build();
+    }
+
 }// end
