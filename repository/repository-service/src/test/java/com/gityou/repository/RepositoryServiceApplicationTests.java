@@ -10,7 +10,6 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class RepositoryServiceApplicationTests {
 
-    @Test
+    //@Test
     public void contextLoads() throws Exception {
         Repository repository = new FileRepository("D:\\tmp\\gityou\\repository\\xiaorui\\test5.git\\.git");
 
@@ -52,6 +51,8 @@ public class RepositoryServiceApplicationTests {
             ObjectLoader loader = repository.open(objectId);
 
             loader.copyTo(System.out);
+            String str = new String(loader.getBytes());
+            System.out.println();
         }
 
 

@@ -1,9 +1,9 @@
 package com.gityou.repository.service;
 
 
-import com.gityou.repository.entity.ChangeResult;
-import com.gityou.repository.utils.GitUtils;
+import com.gityou.repository.entity.FileContentResult;
 import com.gityou.repository.entity.FileResult;
+import com.gityou.repository.utils.GitUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +20,8 @@ public class FileService {
         return gitUtils.fileList(user, name, branch, path);
     }
 
-
+    // 返回文件内容
+    public FileContentResult fileContent(String user, String name, String branch, String path) {
+        return gitUtils.fileContent(user, name, branch, path);
+    }
 }// end

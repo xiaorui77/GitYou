@@ -1,5 +1,6 @@
 package com.gityou.repository.controller;
 
+import com.gityou.repository.entity.FileContentResult;
 import com.gityou.repository.entity.FileResult;
 import com.gityou.repository.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,10 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-
-    @GetMapping
+    /*
+     * 获取文件列表
+     * */
+    @GetMapping("list")
     public ResponseEntity<List<FileResult>> fileList(
             String user, String name, @RequestParam(defaultValue = "master") String branch,
             @RequestParam(required = false) String path) {
@@ -29,6 +32,20 @@ public class FileController {
             return ResponseEntity.notFound().build();
         else
             return ResponseEntity.ok(fileResults);
+    }
+
+    /*
+     * 获取文件内容
+     * */
+    @GetMapping
+    public ResponseEntity<FileContentResult> fileContent(
+            String user, String name, @RequestParam(defaultValue = "master") String branch,
+            @RequestParam(required = false) String path) {
+        FileContentResult fileContent = fileService.fileContent(user, name, branch, path);
+        if (fileContent == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(fileContent);
     }
 
     @GetMapping("change")

@@ -1,9 +1,6 @@
 package com.gityou.repository.utils;
 
-import com.gityou.repository.entity.BranchResult;
-import com.gityou.repository.entity.ChangeResult;
-import com.gityou.repository.entity.CommitResult;
-import com.gityou.repository.entity.FileResult;
+import com.gityou.repository.entity.*;
 import com.gityou.repository.gitblit.model.PathModel;
 import com.gityou.repository.gitblit.model.RefModel;
 import org.eclipse.jgit.api.Git;
@@ -11,8 +8,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -212,6 +213,45 @@ public class GitUtils {
                 file.setDeletions(e.deletions);
                 result.add(file);
             });
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 返回文件内容
+    public FileContentResult fileContent(String user, String name, String branch, String path) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        File localPath = new File(temp.toString());
+
+        try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {
+            ObjectId branchId = JGitUtils.getBranch(repository, branch).getObjectId();
+            RevCommit commit = repository.parseCommit(branchId);
+
+            RevTree tree = commit.getTree();
+
+            // 找打指定的文件
+            TreeWalk treeWalk = new TreeWalk(repository);
+            treeWalk.addTree(tree);
+            treeWalk.setRecursive(true);
+            treeWalk.setFilter(PathFilter.create(path));
+            if (!treeWalk.next()) {
+                System.out.println("错误");
+            }
+
+            ObjectId objectId = treeWalk.getObjectId(0);
+            ObjectLoader loader = repository.open(objectId);
+
+            // loader.copyTo(System.out);
+            FileContentResult result = new FileContentResult();
+            int index = path.lastIndexOf('/');
+            if (index == -1)
+                result.setName(path);
+            else
+                result.setName(path.substring(index + 1));
+            result.setContent(loader.getBytes());
+
             return result;
         } catch (IOException e) {
             e.printStackTrace();
