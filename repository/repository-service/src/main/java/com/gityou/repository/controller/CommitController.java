@@ -35,9 +35,10 @@ public class CommitController {
      * 获取提交
      */
     @GetMapping("list")
-    public ResponseEntity<List> commitList(String user, String name,
-                                           @RequestParam(defaultValue = "master") String branch,
-                                           @RequestParam(defaultValue = "1") Integer page) {
+    public ResponseEntity<List> commitList(
+            String user, String name,
+            @RequestParam(defaultValue = "master") String branch,
+            @RequestParam(defaultValue = "1") Integer page) {
         List result = commitService.commitList(user, name, branch, page);
         if (result == null)
             return ResponseEntity.notFound().build();
