@@ -1,7 +1,8 @@
 package com.gityou.repository.controller;
 
-import com.gityou.repository.entity.ChangeResult;
+import com.gityou.repository.entity.FileDiffResult;
 import com.gityou.repository.entity.CommitResult;
+import com.gityou.repository.entity.DiffResult;
 import com.gityou.repository.service.CommitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class CommitController {
     }
 
     /**
-     * 获取提交
+     * 获取提交列表
      */
     @GetMapping("list")
     public ResponseEntity<List> commitList(
@@ -50,8 +51,21 @@ public class CommitController {
      * 某次提交修改的文件列表
      * */
     @GetMapping("change")
-    public ResponseEntity changeList(String user, String name, String commit) {
-        List<ChangeResult> result = commitService.changeList(user, name, commit);
+    public ResponseEntity<List> changeList(String user, String name, String commit) {
+        List<FileDiffResult> result = commitService.changeList(user, name, commit);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
+
+
+    /*
+     * 文件差异 单个文件
+     * */
+    @GetMapping("diff")
+    public ResponseEntity<DiffResult> diff(String user, String name, String commit, String path) {
+        DiffResult result = commitService.diff(user, name, commit, path);
         if (result == null)
             return ResponseEntity.notFound().build();
         else

@@ -5,21 +5,26 @@ import com.gityou.repository.gitblit.model.PathModel;
 import com.gityou.repository.gitblit.model.RefModel;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
-import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.treewalk.AbstractTreeIterator;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -191,34 +196,6 @@ public class GitUtils {
         return null;
     }
 
-    // 文件修改列表
-    public List<ChangeResult> changeList(String user, String name, String commit) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
-        File localPath = new File(temp.toString());
-
-        try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {
-            AnyObjectId commitId = ObjectId.fromString(commit);
-            RevCommit revCommit = repository.parseCommit(commitId);
-
-            List<PathModel.PathChangeModel> changeFiles = JGitUtils.getFilesInCommit(repository, revCommit);
-
-            List<ChangeResult> result = new ArrayList<>(changeFiles.size());
-            changeFiles.forEach(e -> {
-                ChangeResult file = new ChangeResult();
-                file.setName(e.name);
-                file.setPath(e.path);
-                file.setType(e.changeType.name());
-                file.setInsertions(e.insertions);
-                file.setDeletions(e.deletions);
-                result.add(file);
-            });
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     // 返回文件内容
     public FileContentResult fileContent(String user, String name, String branch, String path) {
         StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
@@ -256,6 +233,155 @@ public class GitUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    // 文件修改列表, 手工修改完成
+    public List<FileDiffResult> changeList(String user, String name, String commit) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        File localPath = new File(temp.toString());
+
+        try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {
+            RevCommit revCommit = repository.parseCommit(ObjectId.fromString(commit));
+            RevWalk revWalk = new RevWalk(repository);
+
+            // 如果是根提交
+            if (revCommit.getParentCount() == 0) {
+                List<FileDiffResult> result = new ArrayList<>();
+                TreeWalk tw = new TreeWalk(repository);
+                tw.reset();
+                tw.setRecursive(true);
+                tw.addTree(revCommit.getTree());
+                while (tw.next()) {
+                    ObjectId objectId = tw.getObjectId(0);
+                    byte[] bytes = tw.getObjectReader().open(objectId).getBytes();
+
+                    FileDiffResult file = new FileDiffResult();
+                    file.setName(tw.getPathString());
+                    file.setPath(tw.getPathString());
+                    file.setType(DiffEntry.ChangeType.ADD.toString());
+                    file.setStatistics("@@ -0,0 +0,0 @@");
+                    file.setDiff(new String(bytes));
+                    result.add(file);
+                }
+                tw.close();
+                return result;
+            }
+
+            // 获取上个提交
+            RevCommit parentCommit = revWalk.parseCommit(revCommit.getParent(0).getId());
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            DiffFormatter df = new DiffFormatter(output);
+            df.setRepository(repository);
+            df.setDiffComparator(RawTextComparator.DEFAULT);
+            df.setDetectRenames(true); // 检测重用名
+
+            List<DiffEntry> diffs = df.scan(parentCommit.getTree(), revCommit.getTree());
+            List<FileDiffResult> result = new ArrayList<>(diffs.size());    // 返回的结果
+            for (DiffEntry diff : diffs) {
+                FileDiffResult file = new FileDiffResult();
+                file.setType(diff.getChangeType().toString());  // 设置Type
+                file.setName(diff.getNewPath().substring(diff.getNewPath().lastIndexOf('/') + 1));  // 设置name
+                file.setPath(diff.getNewPath());
+                if (diff.getChangeType().equals(DiffEntry.ChangeType.DELETE) || diff.getChangeType().equals(DiffEntry.ChangeType.RENAME))
+                    file.setOldPath(diff.getOldPath());
+
+                df.format(diff);
+                InputStream inputStream = new ByteArrayInputStream(output.toByteArray());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                // 分离结果
+                while (reader.ready()) {
+                    String str = reader.readLine();
+                    if (str.startsWith("@@") && str.endsWith("@@")) {
+                        file.setStatistics(str);
+                        StringBuilder stringBuffer = new StringBuilder();
+                        String line = "";
+                        while ((line = reader.readLine()) != null)
+                            stringBuffer.append(line).append("\n"); // 可以进一步性能优化
+                        file.setDiff(stringBuffer.toString());
+                        break;
+                    }
+                }
+                output.reset();
+                result.add(file);
+            }
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 文件差异 修改类型为MODIFY的才可以调用
+    public DiffResult diff(String user, String name, String commit, String path) {
+        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        File localPath = new File(temp.toString());
+
+        try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {
+            Git git = new Git(repository);
+
+            //Iterator<RevCommit> iterator = git.log().add(ObjectId.fromString(commit)).setSkip(1).call().iterator();
+
+            RevCommit revCommit = repository.parseCommit(ObjectId.fromString(commit));
+
+            // 如果没有证明是第一条
+            if (revCommit.getParentCount() == 0) {
+                return null;
+            }
+
+            AbstractTreeIterator oldTree = prepareTreeParser(repository, revCommit.getParent(0));
+            AbstractTreeIterator newTree = prepareTreeParser(repository, revCommit);
+
+            List<DiffEntry> diff = git.diff().setPathFilter(PathFilter.create(path)).setOldTree(oldTree).setNewTree(newTree).call();
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            DiffResult result = new DiffResult();
+
+            for (DiffEntry entry : diff) {
+                result.setType(entry.getChangeType().toString());
+                try (DiffFormatter formatter = new DiffFormatter(output)) {
+                    formatter.setRepository(repository);
+                    formatter.format(entry);
+                    break;
+                }
+            }
+            InputStream inputStream = new ByteArrayInputStream(output.toByteArray());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            // 分离结果
+            while (reader.ready()) {
+                String str = reader.readLine();
+                if (str.startsWith("@@") && str.endsWith("@@")) {
+                    result.setStatistics(str);
+                    StringBuffer stringBuffer = new StringBuffer();
+                    String line = "";
+                    while ((line = reader.readLine()) != null)
+                        stringBuffer.append(line).append("\n");
+                    result.setDiff(stringBuffer.toString());
+                    break;
+                }
+            }
+            return result;
+        } catch (IOException | GitAPIException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /*  static util function*/
+    private static AbstractTreeIterator prepareTreeParser(org.eclipse.jgit.lib.Repository repository, ObjectId objectId) throws IOException {
+        // from the commit we can build the tree which allows us to construct the TreeParser
+        // noinspection Duplicates
+        try (RevWalk walk = new RevWalk(repository)) {
+            RevCommit commit = walk.parseCommit(objectId);
+            RevTree tree = walk.parseTree(commit.getTree().getId());
+
+            CanonicalTreeParser treeParser = new CanonicalTreeParser();
+            try (ObjectReader reader = repository.newObjectReader()) {
+                treeParser.reset(reader, tree.getId());
+            }
+            walk.dispose();
+            return treeParser;
+        }
     }
 
 }// end

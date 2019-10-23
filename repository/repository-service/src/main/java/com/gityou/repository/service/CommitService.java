@@ -1,8 +1,9 @@
 package com.gityou.repository.service;
 
 import com.gityou.repository.client.UserClient;
-import com.gityou.repository.entity.ChangeResult;
+import com.gityou.repository.entity.FileDiffResult;
 import com.gityou.repository.entity.CommitResult;
+import com.gityou.repository.entity.DiffResult;
 import com.gityou.repository.utils.GitUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +43,12 @@ public class CommitService {
     }
 
     // 文件修改列表
-    public List<ChangeResult> changeList(String user, String name, String commit) {
+    public List<FileDiffResult> changeList(String user, String name, String commit) {
         return gitUtils.changeList(user, name, commit);
     }
 
+    // 文件差异
+    public DiffResult diff(String user, String name, String commit, String path) {
+        return gitUtils.diff(user, name, commit, path);
+    }
 }// end
