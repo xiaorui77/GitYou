@@ -34,8 +34,8 @@ public class UserController {
     /*
      * 根据email获取用户信息
      * */
-    @GetMapping("query")
-    public ResponseEntity<User> queryUser(String email) {
+    @RequestMapping("byEmail")
+    public ResponseEntity<User> queryUser(@RequestParam String email) {
         User user = userService.queryUserByEmail(email);
         if (user == null)
             return ResponseEntity.notFound().build();

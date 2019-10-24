@@ -1,8 +1,8 @@
 package com.gityou.repository.controller;
 
-import com.gityou.repository.entity.FileDiffResult;
 import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.entity.DiffResult;
+import com.gityou.repository.entity.FileDiffResult;
 import com.gityou.repository.service.CommitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,19 @@ import java.util.List;
 public class CommitController {
     @Autowired
     private CommitService commitService;
+
+    /*
+     * 根据提交id获取提交信息
+     * */
+    @GetMapping
+    public ResponseEntity<CommitResult> query(String user, String name, String commit) {
+        CommitResult result = commitService.query(user, name, commit);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
+
 
     /**
      * 获取最近一次提交 简单格式

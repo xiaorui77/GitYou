@@ -150,6 +150,25 @@ public class GitUtils {
         return null;
     }
 
+    // 获取提交
+    public CommitResult query(String user, String name, String commit) {
+        File localPath = new File(basePath + user + "\\" + name + ".git\\.git");
+
+        try (org.eclipse.jgit.lib.Repository repository = new FileRepository(localPath)) {
+            RevCommit revCommit = repository.parseCommit(ObjectId.fromString(commit));
+            CommitResult result = new CommitResult();
+            result.setName(commit);
+            result.setMessage(revCommit.getShortMessage());
+            result.setFullMessage(revCommit.getFullMessage());
+            result.setEmail(revCommit.getAuthorIdent().getEmailAddress());
+            result.setTime(revCommit.getCommitTime());
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // 最近一次提交
     public CommitResult lastCommit(String user, String name) {
         StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
@@ -235,7 +254,7 @@ public class GitUtils {
         return null;
     }
 
-    // 文件修改列表, 手工修改完成
+    // 文件修改列表
     public List<FileDiffResult> changeList(String user, String name, String commit) {
         StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
         File localPath = new File(temp.toString());
@@ -383,5 +402,6 @@ public class GitUtils {
             return treeParser;
         }
     }
+
 
 }// end

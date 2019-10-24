@@ -1,14 +1,16 @@
 package com.gityou.user.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
     @Id
     private Integer id;
     private String username;
@@ -17,6 +19,7 @@ public class User {
     @JsonIgnore
     private String salt;
     private String email;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
 

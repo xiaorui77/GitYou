@@ -1,20 +1,13 @@
 package com.gityou.repository.entity;
 
 public class CommitResult {
-    private String email;   // 提交者的邮箱, 用来标识提交者
     private String name;    // 提交号
+    private String author;  // 作者
+    private String email;   // 作者的邮箱
     private String message; // 提交说明, 简单形式
     private String fullMessage; // 详细提交说明
     private Integer time;
 
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getName() {
         return name;
@@ -22,6 +15,22 @@ public class CommitResult {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getMessage() {

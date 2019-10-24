@@ -1,10 +1,11 @@
 package com.gityou.repository.service;
 
 import com.gityou.repository.client.UserClient;
-import com.gityou.repository.entity.FileDiffResult;
 import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.entity.DiffResult;
+import com.gityou.repository.entity.FileDiffResult;
 import com.gityou.repository.utils.GitUtils;
+import com.gityou.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,13 @@ public class CommitService {
     @Autowired
     private UserClient userClient;
 
+    // 根据commit id查询Commit信息
+    public CommitResult query(String username, String name, String commit) {
+        CommitResult result = gitUtils.query(username, name, commit);
+        User author = userClient.queryUserByEmail(result.getEmail());
+        result.setAuthor(author.getUsername());
+        return result;
+    }
 
     // 获取最近一次提交
     public CommitResult lastCommit(String user, String name) {
@@ -51,4 +59,6 @@ public class CommitService {
     public DiffResult diff(String user, String name, String commit, String path) {
         return gitUtils.diff(user, name, commit, path);
     }
+
+
 }// end
