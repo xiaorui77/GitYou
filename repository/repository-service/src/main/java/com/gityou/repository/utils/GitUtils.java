@@ -1,8 +1,10 @@
 package com.gityou.repository.utils;
 
+import com.gityou.common.entity.PageResult;
 import com.gityou.repository.entity.*;
 import com.gityou.repository.gitblit.model.PathModel;
 import com.gityou.repository.gitblit.model.RefModel;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -32,6 +34,8 @@ import java.util.List;
 public class GitUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitUtils.class);
     private static final String basePath = "D:\\tmp\\gityou\\repository\\";
+
+    private static final int PageSize = 28;
 
     // 新建仓库
     public boolean createNewRepository(String user, String name) {
@@ -191,23 +195,44 @@ public class GitUtils {
     }
 
     // commit列表
-    public List<CommitResult> commitList(String user, String name, String branch, Integer page) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
-        File localPath = new File(temp.toString());
+    public PageResult<CommitResult> commitList(String user, String name, String branch, String author, Integer page) {
+        File localFile = new File(basePath + user + "\\" + name + ".git\\.git");
 
-        try (Git git = Git.open(localPath)) {
-            List<CommitResult> result = new ArrayList<>();
-            List<RevCommit> revCommits = JGitUtils.getRevLog(git.getRepository(), branch, (page - 1) * 28, 28);
-            //Iterable<RevCommit> revCommits = git.log().set.setSkip().setMaxCount(28).call(); // 每页28
+        try (org.eclipse.jgit.lib.Repository repository = new FileRepository(localFile)) {
+            List<CommitResult> commits = new ArrayList<>();
+            // List<RevCommit> revCommits = JGitUtils.getRevLog(repository, branch, (page - 1) * 28, 28);
+            
+            /* new begin*/
+            ObjectId branchObject;
+            if (StringUtils.isEmpty(branch))
+                branchObject = repository.resolve("master");
+            else
+                branchObject = repository.resolve(branch);
 
-            revCommits.forEach(e -> {
-                CommitResult c = new CommitResult();
-                c.setEmail(e.getAuthorIdent().getEmailAddress());
-                c.setName(e.getName());
-                c.setMessage(e.getShortMessage());
-                c.setTime(e.getCommitTime());
-                result.add(c);
-            });
+            RevWalk revWalk = new RevWalk(repository);
+            RevCommit head = revWalk.parseCommit(branchObject);
+            revWalk.markStart(head);
+
+            int start = (page - 1) * PageSize;
+            int count = 0;
+            for (RevCommit rev : revWalk) {
+                count++;
+                if (count <= start)
+                    continue;
+                if (author != null && !rev.getAuthorIdent().getEmailAddress().equals(author))
+                    continue;
+
+                if (commits.size() < PageSize) {
+                    CommitResult c = new CommitResult();
+                    c.setEmail(rev.getAuthorIdent().getEmailAddress());
+                    c.setName(rev.getName());
+                    c.setMessage(rev.getShortMessage());
+                    c.setTime(rev.getCommitTime());
+                    commits.add(c);
+                }
+            }
+            int pageNum = (int) Math.ceil((double) count / PageSize);
+            PageResult<CommitResult> result = new PageResult<>(count, pageNum, commits);
             return result;
         } catch (IOException e) {
             e.printStackTrace();

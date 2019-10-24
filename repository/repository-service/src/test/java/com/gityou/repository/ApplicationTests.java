@@ -1,8 +1,6 @@
 package com.gityou.repository;
 
-import com.gityou.repository.gitblit.model.PathModel;
 import com.gityou.repository.utils.GitUtils;
-import com.gityou.repository.utils.JGitUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
@@ -108,9 +106,6 @@ public class ApplicationTests {
         //List<ChangeResult> changeResults = gitUtils.changeList("xiaorui", "test", "928d184c1c83cd8954b08754a7b4153028bfecee");
         // DiffResult diff = gitUtils.diff("xiaorui", "test", "928d184c1c83cd8954b08754a7b4153028bfecee", "test");
 
-        RevCommit commit = repository.parseCommit(ObjectId.fromString("26196fbc56cc025d3ac6ee3ef64e9bf0ebd3fc2c"));
-
-        List<PathModel.PathChangeModel> filesInCommit = JGitUtils.getFilesInCommit(repository, commit, false);
 
         System.out.println();
     }

@@ -11,7 +11,10 @@ import java.util.Set;
 
 public interface UserApi {
 
-    @GetMapping(value = "byEmail")
+    @GetMapping("user/byUsername")
+    User queryUserByUsername(@RequestParam String username);
+
+    @GetMapping("user/byEmail")
     User queryUserByEmail(@RequestParam String email);
 
 

@@ -40,15 +40,26 @@ public class UserService {
     }
 
     // 根据 id获取user信息
-    public User queryUserByEmail(Integer id) {
+    public User queryUser(Integer id) {
         return userMapper.selectByPrimaryKey(id);
     }
 
+    // 根据 username获取user信息
+    public User queryByUsername(String username) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username", username);
+
+        return userMapper.selectOneByExample(example);
+    }
+
     // 根据email获取user信息
-    public User queryUserByEmail(String email) {
-        User user = new User();
-        user.setEmail(email);
-        return userMapper.selectOne(user);
+    public User queryByEmail(String email) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("email", email);
+
+        return userMapper.selectOneByExample(example);
     }
 
     @Transactional

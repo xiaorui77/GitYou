@@ -1,5 +1,6 @@
 package com.gityou.repository.controller;
 
+import com.gityou.common.entity.PageResult;
 import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.entity.DiffResult;
 import com.gityou.repository.entity.FileDiffResult;
@@ -49,11 +50,11 @@ public class CommitController {
      * 获取提交列表
      */
     @GetMapping("list")
-    public ResponseEntity<List> commitList(
-            String user, String name,
-            @RequestParam(defaultValue = "master") String branch,
+    public ResponseEntity<PageResult> commitList(
+            String user, String name, String branch,
+            @RequestParam(defaultValue = "") String author,
             @RequestParam(defaultValue = "1") Integer page) {
-        List result = commitService.commitList(user, name, branch, page);
+        PageResult<CommitResult> result = commitService.commitList(user, name, branch, author, page);
         if (result == null)
             return ResponseEntity.notFound().build();
         else

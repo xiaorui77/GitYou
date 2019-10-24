@@ -24,7 +24,19 @@ public class UserController {
      * */
     @GetMapping
     public ResponseEntity<User> queryUser(Integer id) {
-        User user = userService.queryUserByEmail(id);
+        User user = userService.queryUser(id);
+        if (user == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(user);
+    }
+
+    /*
+     * 根据username 获取用户信息
+     * */
+    @RequestMapping("byUsername")
+    public ResponseEntity<User> queryUserByUsername(@RequestParam String username) {
+        User user = userService.queryByUsername(username);
         if (user == null)
             return ResponseEntity.notFound().build();
         else
@@ -35,8 +47,8 @@ public class UserController {
      * 根据email获取用户信息
      * */
     @RequestMapping("byEmail")
-    public ResponseEntity<User> queryUser(@RequestParam String email) {
-        User user = userService.queryUserByEmail(email);
+    public ResponseEntity<User> queryUserByEmail(@RequestParam String email) {
+        User user = userService.queryByEmail(email);
         if (user == null)
             return ResponseEntity.notFound().build();
         else

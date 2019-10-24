@@ -1,11 +1,13 @@
 package com.gityou.repository.service;
 
+import com.gityou.common.entity.PageResult;
 import com.gityou.repository.client.UserClient;
 import com.gityou.repository.entity.CommitResult;
 import com.gityou.repository.entity.DiffResult;
 import com.gityou.repository.entity.FileDiffResult;
 import com.gityou.repository.utils.GitUtils;
 import com.gityou.user.pojo.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +40,13 @@ public class CommitService {
     }
 
     // commit列表
-    public List<CommitResult> commitList(String user, String name, String branch, Integer page) {
-        List<CommitResult> commits = gitUtils.commitList(user, name, branch, page);
+    public PageResult<CommitResult> commitList(String user, String name, String branch, String author, Integer page) {
+        String email = null;
+        if (StringUtils.isNotEmpty(author))
+            email = userClient.queryUserByUsername(author).getEmail();
+
+        PageResult<CommitResult> result = gitUtils.commitList(user, name, branch, email, page);
+        List<CommitResult> commits = result.getList();
 
         // 获取用户名
         Set<String> emails = new HashSet<>();
@@ -47,7 +54,7 @@ public class CommitService {
 
         Map<String, String> users = userClient.queryUsersByEmail(emails);
         commits.forEach(e -> e.setEmail(users.get(e.getEmail())));
-        return commits;
+        return result;
     }
 
     // 文件修改列表
