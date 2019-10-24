@@ -2,6 +2,7 @@ package com.gityou.repository.entity;
 
 public class CommitResult {
     private String name;    // 提交号
+    private String parent;  // 父提交号
     private String author;  // 作者
     private String email;   // 作者的邮箱
     private String message; // 提交说明, 简单形式
@@ -15,6 +16,14 @@ public class CommitResult {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     public String getAuthor() {

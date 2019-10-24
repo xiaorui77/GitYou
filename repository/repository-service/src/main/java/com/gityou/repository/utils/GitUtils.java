@@ -162,6 +162,8 @@ public class GitUtils {
             RevCommit revCommit = repository.parseCommit(ObjectId.fromString(commit));
             CommitResult result = new CommitResult();
             result.setName(commit);
+            if (revCommit.getParentCount() > 0)
+                result.setParent(revCommit.getParent(0).getName());
             result.setMessage(revCommit.getShortMessage());
             result.setFullMessage(revCommit.getFullMessage());
             result.setEmail(revCommit.getAuthorIdent().getEmailAddress());
@@ -184,7 +186,11 @@ public class GitUtils {
             revCommits.forEach(e -> {
                 result.setEmail(e.getCommitterIdent().getEmailAddress());
                 result.setName(e.getName());
+                result.setAuthor(e.getCommitterIdent().getName());
+                if (e.getParentCount() > 0)
+                    result.setParent(e.getParent(0).getName());
                 result.setMessage(e.getShortMessage());
+                result.setFullMessage(e.getFullMessage());
                 result.setTime(e.getCommitTime());
             });
             return result;
@@ -201,7 +207,7 @@ public class GitUtils {
         try (org.eclipse.jgit.lib.Repository repository = new FileRepository(localFile)) {
             List<CommitResult> commits = new ArrayList<>();
             // List<RevCommit> revCommits = JGitUtils.getRevLog(repository, branch, (page - 1) * 28, 28);
-            
+
             /* new begin*/
             ObjectId branchObject;
             if (StringUtils.isEmpty(branch))
@@ -224,9 +230,13 @@ public class GitUtils {
 
                 if (commits.size() < PageSize) {
                     CommitResult c = new CommitResult();
-                    c.setEmail(rev.getAuthorIdent().getEmailAddress());
                     c.setName(rev.getName());
+                    if (rev.getParentCount() > 0)
+                        c.setParent(rev.getParent(0).getName());
+                    c.setAuthor(rev.getAuthorIdent().getName());
+                    c.setEmail(rev.getAuthorIdent().getEmailAddress());
                     c.setMessage(rev.getShortMessage());
+                    c.setFullMessage(rev.getFullMessage());
                     c.setTime(rev.getCommitTime());
                     commits.add(c);
                 }
