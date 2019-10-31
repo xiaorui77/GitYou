@@ -11,6 +11,9 @@ import java.util.Set;
 
 public interface UserApi {
 
+    @GetMapping("user")
+    User queryUser(@RequestParam Integer id);
+
     @GetMapping("user/byUsername")
     User queryUserByUsername(@RequestParam String username);
 
@@ -20,4 +23,10 @@ public interface UserApi {
 
     @PostMapping("user/queryUsersByEmail")
     Map<String, String> queryUsersByEmail(@RequestBody Set<String> emails);
+
+    @PostMapping("user/queryNames")
+    Map<Integer, String> queryNames(@RequestBody Set<Integer> ids);
+
+    @PostMapping("user/users")
+    Map<Integer, User> queryUsers(@RequestBody Set<Integer> ids);
 }

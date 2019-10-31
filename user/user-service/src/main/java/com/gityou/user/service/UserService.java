@@ -78,4 +78,32 @@ public class UserService {
         return result;
     }
 
+    // 根据id 查询username
+    public Map<Integer, String> queryNames(Set<Integer> ids) {
+        Map<Integer, String> result = new HashMap<>();
+
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("id", ids);
+        example.selectProperties("id", "username");
+
+        List<User> users = userMapper.selectByExample(example);
+        users.forEach(e -> {
+            result.put(e.getId(), e.getUsername());
+        });
+        return result;
+    }
+
+    // 根据id获取 Users
+    public Map<Integer, User> queryUsers(Set<Integer> ids) {
+        Map<Integer, User> result = new HashMap<>();
+
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("id", ids);
+
+        List<User> users = userMapper.selectByExample(example);
+        users.forEach(e -> result.put(e.getId(), e));
+        return result;
+    }
 }// end

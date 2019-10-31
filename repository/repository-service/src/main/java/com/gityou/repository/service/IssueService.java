@@ -4,42 +4,112 @@ package com.gityou.repository.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gityou.common.entity.PageResult;
+import com.gityou.repository.client.UserClient;
+import com.gityou.repository.mapper.IssueCommentMapper;
 import com.gityou.repository.mapper.IssueMapper;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.pojo.Issue;
-import com.gityou.repository.pojo.Repository;
+import com.gityou.repository.pojo.IssueComment;
+import com.gityou.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class IssueService {
+    @Autowired
+    private UserClient userClient;
+
     @Autowired
     private IssueMapper issueMapper;
 
     @Autowired
     private RepositoryMapper repositoryMapper;
 
-    // 根据repository获取
-    public PageResult<Issue> issuePage(String repository, Integer page) {
-        Repository repo = new Repository();
-        repo.setName(repository);
-        repo = repositoryMapper.selectOne(repo);
+    @Autowired
+    private IssueCommentMapper issueCommentMapper;
 
-        if (repo == null)
+    // 根据repository获取
+    public PageResult<Issue> issuePage(String user, String repository, Integer page) {
+        Long repoId = repositoryMapper.queryId(user, repository);
+        if (repoId == null)
             return null;
 
         Example example = new Example(Issue.class);
         Example.Criteria criteria = example.createCriteria();
 
-        criteria.andEqualTo("repository", repo.getId());
-        // 分页 只对后续的一条有用
+        criteria.andEqualTo("repository", repoId);
+        // 分页 注意: 只对后续的第一条sql语句有用
         PageHelper.startPage(page, 4);
         List<Issue> issueList = issueMapper.selectByExample(example);
         PageInfo<Issue> result = new PageInfo<>(issueList);
 
+        // 获取username
+        Set<Integer> users = new HashSet<>();
+        result.getList().forEach(e -> users.add(e.getAuthorId()));
+        Map<Integer, String> names = userClient.queryNames(users);
+        result.getList().forEach(e -> e.setAuthorName(names.get(e.getAuthorId())));
+
         return new PageResult<Issue>(result.getTotal(), result.getPageNum(), issueList);
     }
+
+    // 获取issue信息
+    public Issue issue(String username, String repository, Integer number) {
+        Long repoId = repositoryMapper.queryId(username, repository);
+        if (repoId == null)
+            return null;
+
+        Example example = new Example(Issue.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("repository", repoId);
+        criteria.andEqualTo("number", number);
+        Issue record = issueMapper.selectOneByExample(example);
+
+        // 获取username
+        User user = userClient.queryUser(record.getAuthorId());
+        record.setAuthorName(user.getUsername());
+        record.setAuthorAvatar(user.getAvatar());
+        return record;
+    }
+
+    // 获取issue comment列表
+    public List<IssueComment> issueComments(String user, String repository, Integer number) {
+        // 获取仓库id
+        Long repoId = repositoryMapper.queryId(user, repository);
+        if (repoId == null)
+            return null;
+
+        return issueComments(repoId, number);
+    }
+
+    // 获取issue_comment列表 number为编号
+    private List<IssueComment> issueComments(Long repository, Integer number) {
+        // 获取issue id
+        Long issueId = issueMapper.queryId(repository, number);
+        if (issueId == null)
+            return null;
+
+        Example example = new Example(IssueComment.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("issue", issueId);
+        List<IssueComment> comments = issueCommentMapper.selectByExample(example);
+
+        // 获取用户信息
+        Set<Integer> names = new HashSet<>();
+        comments.forEach(e -> names.add(e.getAuthorId()));
+        Map<Integer, User> users = userClient.queryUsers(names);
+
+        comments.forEach(e -> {
+            User u = users.get(e.getAuthorId());
+            e.setAuthorName(u.getUsername());
+            e.setAuthorAvatar(u.getAvatar());
+        });
+        return comments;
+    }
+
 }// end

@@ -44,7 +44,7 @@ public class UserController {
     }
 
     /*
-     * 根据email获取用户信息
+     * 根据email获取username
      * */
     @RequestMapping("byEmail")
     public ResponseEntity<User> queryUserByEmail(@RequestParam String email) {
@@ -64,5 +64,28 @@ public class UserController {
             return ResponseEntity.ok(users);
     }
 
+    /*
+     * 根据id获取 username
+     * */
+    @PostMapping("queryNames")
+    public ResponseEntity<Map<Integer, String>> queryNames(@RequestBody Set<Integer> ids) {
+        Map<Integer, String> users = userService.queryNames(ids);
+        if (users == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(users);
+    }
+
+    /*
+     * 根据id获取users
+     * */
+    @PostMapping("users")
+    public ResponseEntity<Map<Integer, User>> queryUsers(@RequestBody Set<Integer> ids) {
+        Map<Integer, User> users = userService.queryUsers(ids);
+        if (users == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(users);
+    }
 
 }// end

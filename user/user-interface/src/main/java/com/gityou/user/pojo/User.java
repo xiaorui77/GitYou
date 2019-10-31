@@ -19,6 +19,7 @@ public class User implements Serializable {
     @JsonIgnore
     private String salt;
     private String email;
+    private String avatar;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
@@ -61,6 +62,14 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Timestamp getCreateTime() {

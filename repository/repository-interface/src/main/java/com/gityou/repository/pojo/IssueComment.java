@@ -4,17 +4,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-@Table(name = "issue")
-public class Issue {
+@Table(name = "issue_comment")
+public class IssueComment {
     @Id
-    private Long id;
-    private Long repository;
-    private Integer number; // issue编号
+    private Integer id;
+    @Id
+    private Long issue;
     private Integer authorId;
-    private String title;
     private String content;
-    private Boolean resolved;   // 是否已解决
-    private Integer label;
     private Integer createTime;
 
     @Transient
@@ -22,28 +19,20 @@ public class Issue {
     @Transient
     private String authorAvatar;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getRepository() {
-        return repository;
+    public Long getIssue() {
+        return issue;
     }
 
-    public void setRepository(Long repository) {
-        this.repository = repository;
-    }
-
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setIssue(Long issue) {
+        this.issue = issue;
     }
 
     public Integer getAuthorId() {
@@ -54,36 +43,12 @@ public class Issue {
         this.authorId = authorId;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getContent() {
         return content;
     }
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Boolean getResolved() {
-        return resolved;
-    }
-
-    public void setResolved(Boolean resolved) {
-        this.resolved = resolved;
-    }
-
-    public Integer getLabel() {
-        return label;
-    }
-
-    public void setLabel(Integer label) {
-        this.label = label;
     }
 
     public Integer getCreateTime() {
