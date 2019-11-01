@@ -1,0 +1,25 @@
+server:
+  port: 7071
+
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.22.137:3306/gityou?characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: gityou
+    password: gityou
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:7050/eureka
+    registry-fetch-interval-seconds: 5
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+
+gityou:
+  jwt:
+    priKeyPath: D:/tmp/gityou/rsa.pri # 私钥地址
+    pubKeyPath: D:/tmp/gityou/rsa.pub     # 公钥地址
+    cookieName: user-identity    # cookie的名称
+    expire: 720 # 过期时间, 单位小时

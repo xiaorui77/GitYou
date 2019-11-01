@@ -1,20 +1,5 @@
-server:
-  port: 7050
-
 spring:
   application:
-    name: eureka
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:7050/eureka
-    fetch-registry: false
-    register-with-eureka: false
-
-  server:
-    enable-self-preservation: false # 关闭自我保护
-    eviction-interval-timer-in-ms: 5000
-
-logging:
-  path: /tmp/logs/
+    name: registry-eureka
+  profiles:
+    active: dev

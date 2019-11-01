@@ -1,0 +1,47 @@
+server:
+  port: 7051
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:7050/eureka
+    registry-fetch-interval-seconds: 5
+
+  instance:
+    lease-renewal-interval-in-seconds: 3 # 心跳时间
+    lease-expiration-duration-in-seconds: 10 # 过期时间
+
+zuul:
+  prefix: /api
+  routes:
+    user-service: /user/**
+    repository-service: /repo/**
+
+  retryable: true     # 重试
+
+  ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
+  host:
+    connect-timeout-millis: 4000
+    socket-timeout-millis: 4000
+
+  sensitive-headers:      # 配置禁止使用的的头信息
+  add-host-header: true
+
+
+ribbon:
+  restclient:
+    enabled: true
+  okhttp:
+    enabled: true
+
+  ReadTimeout: 10000   # 请求处理的超时时间
+
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+

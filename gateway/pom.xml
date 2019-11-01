@@ -44,6 +44,10 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
             <!-- Doctor 插件-->
             <plugin>
                 <groupId>com.spotify</groupId>
@@ -60,7 +64,7 @@
                 </executions>
                 <configuration>
                     <dockerHost>http://192.168.137.124:2375</dockerHost>
-                    <imageName>docker-test/${project.artifactId}</imageName>
+                    <imageName>gityou/${project.artifactId}</imageName>
                     <imageTags>
                         <imageTag>${project.version}</imageTag>
                     </imageTags>
