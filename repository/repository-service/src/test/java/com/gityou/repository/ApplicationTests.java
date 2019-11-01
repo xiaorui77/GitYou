@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ApplicationTests {
 
-    @Test
+    // @Test
     public void contextLoads() throws Exception {
         Repository repository = new FileRepository("D:\\tmp\\gityou\\repository\\xiaorui\\test.git\\.git");
 

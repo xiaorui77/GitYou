@@ -5,27 +5,28 @@
     <parent>
         <groupId>com.gityou.repository</groupId>
         <artifactId>repository</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <artifactId>repository-service</artifactId>
+    <packaging>jar</packaging>
 
 
     <dependencies>
         <dependency>
             <groupId>com.gityou.repository</groupId>
             <artifactId>repository-interface</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.gityou.user</groupId>
             <artifactId>user-interface</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.gityou.common</groupId>
+            <groupId>com.gityou</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
             <scope>compile</scope>
         </dependency>
 
@@ -107,7 +108,8 @@
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
-            <version>8.0.0</version>
+            <version>8.5.0</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>com.sun.jna</groupId>
@@ -115,5 +117,15 @@
             <version>3.0.9</version>
         </dependency>
     </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

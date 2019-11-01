@@ -8,9 +8,9 @@
         <version>2.1.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.gityou.parent</groupId>
-    <artifactId>GitYou</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>com.gityou</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>registry</module>
@@ -66,16 +66,15 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
+
+            <!-- 工具 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.10</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

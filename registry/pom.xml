@@ -3,16 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.gityou.parent</groupId>
-        <artifactId>GitYou</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>com.gityou</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.0.1</version>
     </parent>
-    <groupId>com.gityou.gateway</groupId>
     <artifactId>registry</artifactId>
-
-    <name>register</name>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+    <name>registry</name>
     <description>Register module of GitYou project for Spring Boot</description>
-    
+
 
     <dependencies>
         <dependency>
@@ -39,6 +39,37 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- Doctor 插件-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <dockerHost>http://192.168.137.124:2375</dockerHost>
+                    <imageName>docker-test/${project.artifactId}</imageName>
+                    <imageTags>
+                        <imageTag>${project.version}</imageTag>
+                    </imageTags>
+                    <forceTags>true</forceTags>
+                    <dockerDirectory>${project.basedir}</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
             </plugin>
         </plugins>
     </build>
