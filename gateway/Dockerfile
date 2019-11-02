@@ -1,4 +1,4 @@
 FROM armhfbuild/java
-VOLUME /tmp
+VOLUME /opt/common
 ADD target/gateway-0.1.0.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

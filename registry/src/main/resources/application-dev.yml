@@ -11,3 +11,8 @@ eureka:
   server:
     enable-self-preservation: false # 关闭自我保护
     eviction-interval-timer-in-ms: 5000
+
+logging:
+  pattern:
+    console: '%green(%d{HH:mm:ss}) %highlight(%-5level) %cyan([%30logger{30}]): %msg%n'
+    file: '%d{HH:mm:ss} %highlight(%-5level) %green([%-10thread{10}]) %cyan(%50logger{50}) : %msg%n'

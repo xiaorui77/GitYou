@@ -27,16 +27,15 @@ zuul:
   sensitive-headers:      # 配置禁止使用的的头信息
   add-host-header: true
 
-
+# 负载均衡
 ribbon:
   restclient:
     enabled: true
   okhttp:
     enabled: true
-
   ReadTimeout: 10000   # 请求处理的超时时间
 
-
+# 熔断
 hystrix:
   command:
     default:
@@ -45,3 +44,7 @@ hystrix:
           thread:
             timeoutInMilliseconds: 10000
 
+logging:
+  pattern:
+    console: '%green(%d{HH:mm:ss}) %highlight(%-5level) %cyan([%30logger{30}]): %msg%n'
+    file: '%d{HH:mm:ss} %highlight(%-5level) %green([%-10thread{10}]) %cyan(%50logger{50}) : %msg%n'

@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://gityou-registry:7050/eureka
+      defaultZone: http://127.0.0.1:7050/eureka
     registry-fetch-interval-seconds: 5
 
   instance:
@@ -21,8 +21,8 @@ zuul:
 
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
   host:
-    connect-timeout-millis: 4000
-    socket-timeout-millis: 4000
+    connect-timeout-millis: 8000
+    socket-timeout-millis: 8000
 
   sensitive-headers:      # 配置禁止使用的的头信息
   add-host-header: true
@@ -43,5 +43,6 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 10000
+            timeoutInMilliseconds: 22000
+
 

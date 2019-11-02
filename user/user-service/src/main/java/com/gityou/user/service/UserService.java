@@ -65,6 +65,8 @@ public class UserService {
     @Transactional
     public Map<String, String> queryUsersByEmail(Set<String> emails) {
         Map<String, String> result = new HashMap<>();
+        if (emails == null || emails.isEmpty())
+            return result;
 
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();

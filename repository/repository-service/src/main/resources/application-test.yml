@@ -14,10 +14,13 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://gityou-registry:7050/eureka
+      defaultZone: http://172.17.0.1:7050/eureka
+    registry-fetch-interval-seconds: 5  # 每5秒获取一次信息
   instance:
+    prefer-ip-address: true   # 使用真实ip地址
     lease-renewal-interval-in-seconds: 5        # 心跳时间
     lease-expiration-duration-in-seconds: 15    # 过期时间
+
 
 gityou:
   jwt:

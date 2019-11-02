@@ -4,10 +4,12 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://gityou-registry:7050/eureka
+      defaultZone: http://172.17.0.1:7050/eureka
     fetch-registry: false
     register-with-eureka: false
+  instance:
+    prefer-ip-address: true
 
   server:
     enable-self-preservation: false # 关闭自我保护
-    eviction-interval-timer-in-ms: 5000
+    eviction-interval-timer-in-ms: 6000
