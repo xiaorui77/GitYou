@@ -24,6 +24,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -33,13 +34,27 @@ import java.util.List;
 @Repository
 public class GitUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitUtils.class);
-    private static final String basePath = "D:\\tmp\\gityou\\repository\\";
 
+    // 系统相关分隔符
+    private static final String Separator = File.separator;
+
+    // 仓库位置
+    private static String basePath;
+
+    private static final int FilePathLength = 80;
+    // 每页默认大小 目前只在commit列表时使用
     private static final int PageSize = 28;
+
+
+    @Value("${gityou.repositoryPath}")
+    public void setBasePath(String repositoryPath) {
+        basePath = repositoryPath + Separator;
+    }
+
 
     // 新建仓库
     public boolean createNewRepository(String user, String name) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git");
         File repoPath = new File(temp.toString());
 
         // 创建仓库
@@ -54,7 +69,7 @@ public class GitUtils {
 
     // 通过Url克隆仓库
     public boolean cloneRepository(String user, String name, String url) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git");
         File repoPath = new File(temp.toString());
 
         try (Git git = Git.cloneRepository().setURI(url)
@@ -72,7 +87,7 @@ public class GitUtils {
 
     // 列出所有分支(非远程)
     public List<String> getBranch(String user, String name) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git");
         File localPath = new File(temp.toString());
 
         try (Git git = Git.open(localPath)) {
@@ -90,7 +105,7 @@ public class GitUtils {
     }
 
     public List<BranchResult> branchList(String user, String name) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git" + Separator + ".git");
         File localPath = new File(temp.toString());
 
         try {
@@ -116,7 +131,7 @@ public class GitUtils {
 
     // 列出文件
     public List<FileResult> fileList(String user, String name, String branch, String path) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git").append(Separator).append(".git");
         File localPath = new File(temp.toString());
 
         try {
@@ -124,6 +139,8 @@ public class GitUtils {
             Git git = new Git(repository);
 
             // 获取branch的提交信息
+            System.out.println("basePath: " + basePath);
+            System.out.println("temp: " + temp);
             ObjectId branchId = JGitUtils.getBranch(repository, branch).getObjectId();
             RevCommit revCommit = repository.parseCommit(branchId);
 
@@ -156,7 +173,7 @@ public class GitUtils {
 
     // 获取提交
     public CommitResult query(String user, String name, String commit) {
-        File localPath = new File(basePath + user + "\\" + name + ".git\\.git");
+        File localPath = new File(basePath + user + Separator + name + ".git" + Separator + ".git");
 
         try (org.eclipse.jgit.lib.Repository repository = new FileRepository(localPath)) {
             RevCommit revCommit = repository.parseCommit(ObjectId.fromString(commit));
@@ -177,7 +194,7 @@ public class GitUtils {
 
     // 最近一次提交
     public CommitResult lastCommit(String user, String name) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git").append(Separator).append(".git");
         File localPath = new File(temp.toString());
 
         try (Git git = Git.open(localPath)) {
@@ -202,7 +219,7 @@ public class GitUtils {
 
     // commit列表
     public PageResult<CommitResult> commitList(String user, String name, String branch, String author, Integer page) {
-        File localFile = new File(basePath + user + "\\" + name + ".git\\.git");
+        File localFile = new File(basePath + user + Separator + name + ".git" + Separator + ".git");
 
         try (org.eclipse.jgit.lib.Repository repository = new FileRepository(localFile)) {
             List<CommitResult> commits = new ArrayList<>();
@@ -252,7 +269,7 @@ public class GitUtils {
 
     // 返回文件内容
     public FileContentResult fileContent(String user, String name, String branch, String path) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git" + Separator + ".git");
         File localPath = new File(temp.toString());
 
         try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {
@@ -291,7 +308,7 @@ public class GitUtils {
 
     // 文件修改列表
     public List<FileDiffResult> changeList(String user, String name, String commit) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git" + Separator + ".git");
         File localPath = new File(temp.toString());
 
         try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {
@@ -367,7 +384,7 @@ public class GitUtils {
 
     // 文件差异 修改类型为MODIFY的才可以调用
     public DiffResult diff(String user, String name, String commit, String path) {
-        StringBuilder temp = new StringBuilder(60).append(basePath).append(user).append("\\").append(name).append(".git\\.git");
+        StringBuilder temp = new StringBuilder(FilePathLength).append(basePath).append(user).append(Separator).append(name).append(".git" + Separator + ".git");
         File localPath = new File(temp.toString());
 
         try (org.eclipse.jgit.lib.Repository repository = new FileRepository(temp.toString())) {

@@ -23,3 +23,5 @@ gityou:
   jwt:
     pubKeyPath: D:/tmp/gityou/rsa.pub     # 公钥地址
     cookieName: user-identity    # cookie的名称
+
+  repositoryPath: D:\tmp\gityou\repository

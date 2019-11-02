@@ -17,6 +17,12 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 15
 
+logging:
+  pattern:
+    console: '%green(%d{HH:mm:ss}) %highlight(%-5level) %cyan([%30logger{30}]): %msg%n'
+    file: '%d{HH:mm:ss} %highlight(%-5level) %green([%-10thread{10}]) %cyan(%50logger{50}) : %msg%n'
+
+
 gityou:
   jwt:
     priKeyPath: D:/tmp/gityou/rsa.pri # 私钥地址

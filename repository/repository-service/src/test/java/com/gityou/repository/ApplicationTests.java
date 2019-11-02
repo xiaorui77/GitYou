@@ -13,7 +13,6 @@ import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
-import org.junit.Test;
 
 import java.io.*;
 import java.util.Iterator;
@@ -99,7 +98,7 @@ public class ApplicationTests {
         }
     }
 
-    @Test
+    //@Test
     public void test() throws IOException {
         GitUtils gitUtils = new GitUtils();
         Repository repository = new FileRepository("D:\\tmp\\gityou\\repository\\xiaorui\\test5.git\\.git");

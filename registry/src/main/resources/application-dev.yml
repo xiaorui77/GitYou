@@ -5,12 +5,12 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:7050/eureka
-    fetch-registry: false
-    register-with-eureka: false
+    fetch-registry: false   # 自己不需要抓取服务列表, 自己就是
+    register-with-eureka: false   # 自己不需要注册
 
   server:
-    enable-self-preservation: false # 关闭自我保护
-    eviction-interval-timer-in-ms: 5000
+    enable-self-preservation: false   # 关闭自我保护
+    eviction-interval-timer-in-ms: 5000 # 剔除没用服务间隔时间
 
 logging:
   pattern:
