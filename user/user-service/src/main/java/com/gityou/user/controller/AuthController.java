@@ -32,11 +32,12 @@ public class AuthController {
     private AuthProperties authProperties;
 
 
-    /* 登录
+    /*
+     * 登录
      * */
     @PostMapping("login")
-    public ResponseEntity<RequestResult<UserInfo>> verify(String username, String password,
-                                                          HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<RequestResult<UserInfo>> login(String username, String password,
+                                                         HttpServletRequest request, HttpServletResponse response) {
         RequestResult<User> result = authService.authentication(username, password);
 
         if (result.getCode() == 200) {
@@ -48,11 +49,21 @@ public class AuthController {
     }
 
     /*
+     * 退出登录
+     * */
+    @PostMapping("logout")
+    public ResponseEntity<RequestResult<UserInfo>> logout(String username, String password,
+                                                          HttpServletRequest request, HttpServletResponse response) {
+        CookieUtils.deleteCookie(request, response, authProperties.getCookieName());
+        return ResponseEntity.ok(RequestResult.ok());
+    }
+
+    /*
      * 验证
      * */
     @PostMapping("verify")
-    public ResponseEntity<RequestResult<UserInfo>> login(@CookieValue("user-identity") String token,
-                                                         HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<RequestResult<UserInfo>> verify(@CookieValue("user-identity") String token,
+                                                          HttpServletRequest request, HttpServletResponse response) {
         try {
             UserInfo userInfo = JwtUtils.getInfoFromToken(token, authProperties.getPublicKey());
             return ResponseEntity.ok(new RequestResult<>(200, "验证通过", userInfo));
