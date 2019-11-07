@@ -6,18 +6,21 @@ import javax.persistence.Table;
 @Table(name = "star")
 public class Star {
     @Id
-    private Integer id;
+    private Integer user;
     @Id
     private Long repository;
+
+    private Integer watch;
+    private Integer watchTime;
     private Boolean star;
     private Integer starTime;
 
-    public Integer getId() {
-        return id;
+    public Integer getUser() {
+        return user;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUser(Integer user) {
+        this.user = user;
     }
 
     public Long getRepository() {
@@ -26,6 +29,23 @@ public class Star {
 
     public void setRepository(Long repository) {
         this.repository = repository;
+    }
+
+
+    public Integer getWatch() {
+        return watch;
+    }
+
+    public void setWatch(Integer watch) {
+        this.watch = watch;
+    }
+
+    public Integer getWatchTime() {
+        return watchTime;
+    }
+
+    public void setWatchTime(Integer watchTime) {
+        this.watchTime = watchTime;
     }
 
     public Boolean getStar() {

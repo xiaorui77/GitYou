@@ -16,6 +16,10 @@ public class Repository {
     private Byte privacy;
     private Integer type;
     private Integer language;
+
+    private Integer star;
+    private Integer watch;
+    private Integer fork;
     private String defaultBranch;
     private Timestamp updateTime;
     private Timestamp createTime;
@@ -82,6 +86,30 @@ public class Repository {
 
     public void setLanguage(Integer language) {
         this.language = language;
+    }
+
+    public Integer getStar() {
+        return star;
+    }
+
+    public void setStar(Integer star) {
+        this.star = star;
+    }
+
+    public Integer getWatch() {
+        return watch;
+    }
+
+    public void setWatch(Integer watch) {
+        this.watch = watch;
+    }
+
+    public Integer getFork() {
+        return fork;
+    }
+
+    public void setFork(Integer fork) {
+        this.fork = fork;
     }
 
     public String getDefaultBranch() {
