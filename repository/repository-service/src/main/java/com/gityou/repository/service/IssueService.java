@@ -86,16 +86,16 @@ public class IssueService {
         if (repoId == null)
             return null;
 
-        return issueComments(repoId, number);
-    }
-
-    // 获取issue_comment列表 number为编号
-    private List<IssueComment> issueComments(Long repository, Integer number) {
         // 获取issue id
-        Long issueId = issueMapper.queryId(repository, number);
+        Long issueId = issueMapper.queryId(repoId, number);
         if (issueId == null)
             return null;
 
+        return issueComments(issueId);
+    }
+
+    // 根据Id获取Issue_Comment列表
+    public List<IssueComment> issueComments(Long issueId) {
         Example example = new Example(IssueComment.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("issue", issueId);
@@ -130,4 +130,5 @@ public class IssueService {
             return repositoryMapper.increase(issue.getRepository(), "issue_num", 1) == 1;
         return false;
     }
+
 }// end

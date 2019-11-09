@@ -99,6 +99,8 @@ public class UserService {
     // 根据id获取 Users
     public Map<Integer, User> queryUsers(Set<Integer> ids) {
         Map<Integer, User> result = new HashMap<>();
+        if (ids.isEmpty())
+            return result;
 
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();

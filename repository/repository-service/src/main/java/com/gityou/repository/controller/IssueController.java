@@ -47,8 +47,17 @@ public class IssueController {
      * 根据issue获取comment列表
      * */
     @RequestMapping("comments")
-    public ResponseEntity<List<IssueComment>> issueComments(String user, String repository, Integer issue) {
-        List<IssueComment> result = issueService.issueComments(user, repository, issue);
+    public ResponseEntity<List<IssueComment>> issueComments(Long issue) {
+        List<IssueComment> result = issueService.issueComments(issue);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
+
+    @RequestMapping("commentsByNumber")
+    public ResponseEntity<List<IssueComment>> issueComments2(String user, String repository, Integer number) {
+        List<IssueComment> result = issueService.issueComments(user, repository, number);
         if (result == null)
             return ResponseEntity.notFound().build();
         else
