@@ -2,10 +2,12 @@ package com.gityou.repository.service;
 
 
 import com.gityou.common.entity.UserInfo;
+import com.gityou.common.pojo.Subscription;
 import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.mapper.StarMapper;
 import com.gityou.repository.pojo.Star;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,10 @@ public class StarService {
 
     @Autowired
     private RepositoryMapper repositoryMapper;
+
+    @Autowired
+    private RabbitTemplate amqp;
+
 
     public Star query(Integer user, Long repository) {
         Star record = new Star();
@@ -33,22 +39,32 @@ public class StarService {
 
     // watch todo: 还需要通知服务, 待完成
     public Boolean watch(Star watch) {
+        // 验证用户
         UserInfo loginUser = LoginInterceptor.getLoginUser();
         if (loginUser == null || !loginUser.getId().equals(watch.getUser()))
             return null;
 
+        // 查询attention信息
         Star record = queryAttention(watch.getUser(), watch.getRepository(), "watch");
         if (record == null)
             return false;
 
         // 如果已经是结果, 则不用更新
-        if (record.getStar() == watch.getStar())
+        if (watch.getWatch().equals(record.getWatch()))
             return true;
 
         // 更新 attention表的watch
-        watch.setStarTime((int) (System.currentTimeMillis() / 1000));
+        watch.setWatchTime((int) (System.currentTimeMillis() / 1000));
         if (starMapper.updateByPrimaryKeySelective(watch) != 1)
             return false;
+
+        // 发送到消息队列, 以创建订阅
+        Subscription subscription = new Subscription();
+        subscription.setUser(loginUser.getId());
+        subscription.setSource(watch.getRepository());
+        subscription.setType(watch.getWatch());
+        amqp.convertAndSend("subscription.create", "watch", subscription);
+
 
         // 判断是否要更新repository
         if (watch.getWatch() > 0 && record.getWatch() > 0)
@@ -80,7 +96,7 @@ public class StarService {
         return repositoryMapper.increase(star.getRepository(), "star", star.getStar() ? 1 : -1) == 1;
     }
 
-    // fork
+    // fork~
     @Transactional
     public Boolean fork(Star fork) {
         UserInfo loginUser = LoginInterceptor.getLoginUser();

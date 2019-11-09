@@ -9,10 +9,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   rabbitmq:
-    host: 192.168.22.141
+    host: 192.168.22.137
     username: gityou
     password: gityou
-    virtual-host: /gityou
+    virtual-host: gityou
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss

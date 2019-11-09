@@ -32,6 +32,8 @@ public class StarController {
 
     /*
      * watch
+     * @argument user: 订阅人(已登录的用户)
+     * @argument repository: 要订阅的repository
      * */
     @PutMapping("watch")
     public ResponseEntity<Boolean> watch(Star star) {

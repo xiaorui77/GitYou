@@ -13,6 +13,13 @@
     <artifactId>message-service</artifactId>
 
     <dependencies>
+        <!-- gityou.common -->
+        <dependency>
+            <groupId>com.gityou</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
         <!-- web and eureka client -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
