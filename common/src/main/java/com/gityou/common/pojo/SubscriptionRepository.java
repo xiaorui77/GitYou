@@ -1,15 +1,17 @@
 package com.gityou.common.pojo;
 
 
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 
-public class Subscription implements Serializable {
-
+@Table(name = "subscription_repository")
+public class SubscriptionRepository implements Serializable {
+    @Id
     private Integer user;
-
+    @Id
+    private Long repository;
     private Integer type;
-
-    private Long source;
     private Integer channel;
 
 
@@ -29,12 +31,12 @@ public class Subscription implements Serializable {
         this.type = type;
     }
 
-    public Long getSource() {
-        return source;
+    public Long getRepository() {
+        return repository;
     }
 
-    public void setSource(Long source) {
-        this.source = source;
+    public void setRepository(Long repository) {
+        this.repository = repository;
     }
 
     public Integer getChannel() {
@@ -50,7 +52,7 @@ public class Subscription implements Serializable {
         return "Subscription{" +
                 "user=" + user +
                 ", type=" + type +
-                ", source=" + source +
+                ", source=" + repository +
                 ", channel=" + channel +
                 '}';
     }

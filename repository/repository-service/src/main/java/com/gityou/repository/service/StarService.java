@@ -2,7 +2,7 @@ package com.gityou.repository.service;
 
 
 import com.gityou.common.entity.UserInfo;
-import com.gityou.common.pojo.Subscription;
+import com.gityou.common.pojo.SubscriptionRepository;
 import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.mapper.StarMapper;
@@ -59,12 +59,14 @@ public class StarService {
             return false;
 
         // 发送到消息队列, 以创建订阅
-        Subscription subscription = new Subscription();
+        SubscriptionRepository subscription = new SubscriptionRepository();
         subscription.setUser(loginUser.getId());
-        subscription.setSource(watch.getRepository());
+        subscription.setRepository(watch.getRepository());
         subscription.setType(watch.getWatch());
-        amqp.convertAndSend("subscription.create", "watch", subscription);
-
+        if (record.getWatch() == 0)
+            amqp.convertAndSend("subscription.service", "watch.create", subscription);
+        else
+            amqp.convertAndSend("subscription.service", "watch.update", subscription);
 
         // 判断是否要更新repository
         if (watch.getWatch() > 0 && record.getWatch() > 0)

@@ -1,6 +1,6 @@
 package com.gityou.message.listener;
 
-import com.gityou.common.pojo.Subscription;
+import com.gityou.common.pojo.SubscriptionRepository;
 import com.gityou.message.service.SubscriptionService;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -24,12 +24,21 @@ public class RepositoryListener {
      * 用户在关注Repository, issue, PR等时产生订阅消息, 由此消费, 即响应用户的订阅
      * */
     @RabbitListener(bindings = @QueueBinding(
-            exchange = @Exchange(value = "subscription.create", ignoreDeclarationExceptions = "true"),
-            value = @Queue(value = "watch.create", durable = "true"),
-            key = {"watch"}
+            exchange = @Exchange(value = "subscription.service", ignoreDeclarationExceptions = "true"),
+            value = @Queue(value = "subscription.watch.create", durable = "true"),
+            key = {"watch.create"}
     ))
-    public void subscribeWatch(Subscription subscription) {
+    public void subscribeWatch(SubscriptionRepository subscription) {
         subscriptionService.createWatch(subscription);
+    }
+
+    @RabbitListener(bindings = @QueueBinding(
+            exchange = @Exchange(value = "subscription.service", ignoreDeclarationExceptions = "true"),
+            value = @Queue(value = "subscription.watch.update", durable = "true"),
+            key = {"watch.update", "watch.delete"}
+    ))
+    public void subscribeWatchUpdate(SubscriptionRepository subscription) {
+        subscriptionService.updateWatch(subscription);
     }
 
 
