@@ -17,8 +17,9 @@ public class Repository {
     private Integer type;
     private Integer language;
 
-    private Integer star;
+    private Integer issueNum;
     private Integer watch;
+    private Integer star;
     private Integer fork;
     private String defaultBranch;
     private Timestamp updateTime;
@@ -88,12 +89,12 @@ public class Repository {
         this.language = language;
     }
 
-    public Integer getStar() {
-        return star;
+    public Integer getIssueNum() {
+        return issueNum;
     }
 
-    public void setStar(Integer star) {
-        this.star = star;
+    public void setIssueNum(Integer issueNum) {
+        this.issueNum = issueNum;
     }
 
     public Integer getWatch() {
@@ -102,6 +103,14 @@ public class Repository {
 
     public void setWatch(Integer watch) {
         this.watch = watch;
+    }
+
+    public Integer getStar() {
+        return star;
+    }
+
+    public void setStar(Integer star) {
+        this.star = star;
     }
 
     public Integer getFork() {

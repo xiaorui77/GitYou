@@ -6,6 +6,7 @@ import com.gityou.repository.pojo.IssueComment;
 import com.gityou.repository.service.IssueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +49,19 @@ public class IssueController {
     @RequestMapping("comments")
     public ResponseEntity<List<IssueComment>> issueComments(String user, String repository, Integer issue) {
         List<IssueComment> result = issueService.issueComments(user, repository, issue);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
+
+
+    /*
+     * 创建issue
+     * */
+    @PostMapping
+    public ResponseEntity<Boolean> issueCreate(Issue issue) {
+        Boolean result = issueService.issueCreate(issue);
         if (result == null)
             return ResponseEntity.notFound().build();
         else

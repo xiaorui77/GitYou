@@ -10,6 +10,7 @@ import com.gityou.repository.mapper.IssueMapper;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.pojo.Issue;
 import com.gityou.repository.pojo.IssueComment;
+import com.gityou.repository.pojo.Repository;
 import com.gityou.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class IssueService {
             return null;
 
         Example example = new Example(Issue.class);
+        example.setOrderByClause("create_time DESC");
         Example.Criteria criteria = example.createCriteria();
 
         criteria.andEqualTo("repository", repoId);
@@ -112,4 +114,20 @@ public class IssueService {
         return comments;
     }
 
+
+    // 创建Issue
+    public Boolean issueCreate(Issue issue) {
+        Example example = new Example(Repository.class);
+        Example.Criteria criteria = example.createCriteria();
+        example.selectProperties("issueNum");
+        criteria.andEqualTo("id", issue.getRepository());
+
+        int issueNum = repositoryMapper.selectOneByExample(example).getIssueNum();
+        issue.setNumber(issueNum);
+        issue.setCreateTime((int) (System.currentTimeMillis() / 1000));
+
+        if (issueMapper.insertSelective(issue) == 1)
+            return repositoryMapper.increase(issue.getRepository(), "issue_num", 1) == 1;
+        return false;
+    }
 }// end
