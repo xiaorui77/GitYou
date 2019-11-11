@@ -7,11 +7,9 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@MapperScan("com.gityou.user.mapper")
+@MapperScan({"com.gityou.user.mapper", "com.gityou.common.mapper"})
 public class UserServiceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);
     }
-
 }

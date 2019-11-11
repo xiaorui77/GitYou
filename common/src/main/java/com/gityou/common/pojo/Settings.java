@@ -9,6 +9,8 @@ public class Settings {
     @Id
     private Integer user;
     private Integer notificationWatching;
+    private Integer notificationParticipating;
+
 
     public Integer getUser() {
         return user;
@@ -24,5 +26,13 @@ public class Settings {
 
     public void setNotificationWatching(Integer notificationWatching) {
         this.notificationWatching = notificationWatching;
+    }
+
+    public Integer getNotificationParticipating() {
+        return notificationParticipating;
+    }
+
+    public void setNotificationParticipating(Integer notificationParticipating) {
+        this.notificationParticipating = notificationParticipating;
     }
 }

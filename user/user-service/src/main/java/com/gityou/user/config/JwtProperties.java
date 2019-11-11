@@ -1,7 +1,9 @@
 package com.gityou.user.config;
 
+import com.gityou.common.utils.RsaUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import javax.annotation.PostConstruct;
 import java.security.PublicKey;
 
 
@@ -14,6 +16,19 @@ public class JwtProperties {
     private String cookieName;
 
     private PublicKey publicKey;
+
+
+    @PostConstruct
+    public void init() {
+        try {
+            // 获取公钥和私钥
+            this.publicKey = RsaUtils.getPublicKey(pubKeyPath);
+        } catch (Exception e) {
+            // logger.error("初始化公钥和私钥失败！", e);
+            throw new RuntimeException();
+        }
+    }
+
 
     public String getSecret() {
         return secret;
