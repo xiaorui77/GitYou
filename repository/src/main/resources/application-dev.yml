@@ -31,3 +31,4 @@ gityou:
     cookieName: user-identity    # cookie的名称
 
   repositoryPath: D:\tmp\gityou\repository
+  repositorySuffix: .git
