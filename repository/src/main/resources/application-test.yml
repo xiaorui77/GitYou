@@ -12,7 +12,7 @@ spring:
     host: 192.168.22.137
     username: gityou
     password: gityou
-    virtual-host: /gityou
+    virtual-host: gityou
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -27,6 +27,10 @@ eureka:
     lease-renewal-interval-in-seconds: 5        # 心跳时间
     lease-expiration-duration-in-seconds: 15    # 过期时间
 
+    # 元数据
+    metadata-map:
+      machineId: 1
+      loadWeight: 100
 
 gityou:
   jwt:

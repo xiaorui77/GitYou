@@ -13,6 +13,8 @@ public class Repository {
     private String username;
     private String name;
     private String description;
+
+    private Long machine;
     private Byte privacy;
     private Integer type;
     private Integer language;
@@ -63,6 +65,14 @@ public class Repository {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Long getMachine() {
+        return machine;
+    }
+
+    public void setMachine(Long machine) {
+        this.machine = machine;
     }
 
     public Byte getPrivacy() {
