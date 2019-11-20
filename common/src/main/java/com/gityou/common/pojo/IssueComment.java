@@ -3,9 +3,10 @@ package com.gityou.common.pojo;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 @Table(name = "issue_comment")
-public class IssueComment {
+public class IssueComment implements Serializable {
     @Id
     private Integer id;
     @Id

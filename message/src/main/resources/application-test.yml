@@ -1,5 +1,5 @@
 server:
-  port: 7073
+  port: 7081
 
 spring:
   datasource:
@@ -12,7 +12,7 @@ spring:
     host: 192.168.137.1
     username: gityou
     password: gityou
-    virtual-host: /gityou
+    virtual-host: gityou
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss

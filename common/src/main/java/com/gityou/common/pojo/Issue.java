@@ -3,9 +3,10 @@ package com.gityou.common.pojo;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 @Table(name = "issue")
-public class Issue {
+public class Issue implements Serializable {
     @Id
     private Long id;
     private Long repository;
@@ -13,6 +14,8 @@ public class Issue {
     private Integer authorId;
     private String title;
     private String content;
+
+    private Integer nextComment;    // 下一个commentId
     private Boolean resolved;   // 是否已解决
     private Integer label;
     private Integer createTime;
@@ -68,6 +71,15 @@ public class Issue {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+
+    public Integer getNextComment() {
+        return nextComment;
+    }
+
+    public void setNextComment(Integer nextComment) {
+        this.nextComment = nextComment;
     }
 
     public Boolean getResolved() {

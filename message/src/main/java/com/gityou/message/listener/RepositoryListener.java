@@ -1,61 +1,49 @@
 package com.gityou.message.listener;
 
-import com.gityou.common.pojo.SubscriptionRepository;
-import com.gityou.message.service.SubscriptionService;
+import com.gityou.common.pojo.Issue;
+import com.gityou.common.pojo.IssueComment;
+import com.gityou.message.service.RepositoryService;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 
 @Component
 public class RepositoryListener {
 
     @Autowired
-    private SubscriptionService subscriptionService;
+    private RepositoryService repositoryService;
+
 
     /*
-     * 从MQ中获取消息订阅通知(也可直接调用本服务的相应接口, 待定)
+     * issue创建时
      *
-     * 用户在关注Repository, issue, PR等时产生订阅消息, 由此消费, 即响应用户的订阅
+     * 通知订阅该repository的用户
      * */
     @RabbitListener(bindings = @QueueBinding(
-            exchange = @Exchange(value = "subscription.service", ignoreDeclarationExceptions = "true"),
-            value = @Queue(value = "subscription.watch.create", durable = "true"),
-            key = {"watch.create"}
-    ))
-    public void subscribeWatch(SubscriptionRepository subscription) {
-        subscriptionService.createWatch(subscription);
-    }
-
-    @RabbitListener(bindings = @QueueBinding(
-            exchange = @Exchange(value = "subscription.service", ignoreDeclarationExceptions = "true"),
-            value = @Queue(value = "subscription.watch.update", durable = "true"),
-            key = {"watch.update", "watch.delete"}
-    ))
-    public void subscribeWatchUpdate(SubscriptionRepository subscription) {
-        subscriptionService.updateWatch(subscription);
+            exchange = @Exchange(value = "repository.issue", ignoreDeclarationExceptions = "true"),
+            value = @Queue(value = "repository.issue.create", durable = "true"),
+            key = {"issue.create"}))
+    public void subscribeWatch(Issue issue) {
+        repositoryService.issueCreate(issue);
     }
 
 
     /*
-     * 从消息队列中获取issue通知
+     * issue下发表comment时
      *
-     * 当有新issue产生时会发布消息, 然后由此捕获, 计算订阅了该项目的用户并推送
+     * 通知订阅该issue的用户
      * */
     @RabbitListener(bindings = @QueueBinding(
-            exchange = @Exchange(value = "subscription.update", ignoreDeclarationExceptions = "true"),
-            value = @Queue(value = "issue.update", durable = "true"),
-            key = {"issue"}
-    ))
-    public void issueNews(@Headers Map<String, String> msg) {
-        if (msg == null || msg.size() == 0)
-            return;
-        System.out.println("收到了消息: " + msg);
+            exchange = @Exchange(value = "repository.issue", ignoreDeclarationExceptions = "true"),
+            value = @Queue(value = "repository.issueComment.create", durable = "true"),
+            key = {"issueComment.create"}))
+    public void subscribeWatch(IssueComment comment) {
+        repositoryService.issueCommentCreate(comment);
     }
+
 
 }// end

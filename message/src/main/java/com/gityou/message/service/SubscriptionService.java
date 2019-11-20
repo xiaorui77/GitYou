@@ -1,9 +1,11 @@
 package com.gityou.message.service;
 
+import com.gityou.common.mapper.SettingsMapper;
 import com.gityou.common.pojo.Settings;
+import com.gityou.common.pojo.SubscriptionIssue;
 import com.gityou.common.pojo.SubscriptionRepository;
-import com.gityou.message.mapper.SettingsMapper;
-import com.gityou.message.mapper.SubscriptionMapper;
+import com.gityou.message.mapper.SubscriptionIssueMapper;
+import com.gityou.message.mapper.SubscriptionRepositoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -11,7 +13,10 @@ import tk.mybatis.mapper.entity.Example;
 @Service
 public class SubscriptionService {
     @Autowired
-    private SubscriptionMapper subscriptionMapper;
+    private SubscriptionRepositoryMapper subscriptionRepositoryMapper;
+
+    @Autowired
+    private SubscriptionIssueMapper subscriptionIssueMapper;
 
     @Autowired
     private SettingsMapper settingsMapper;
@@ -24,15 +29,11 @@ public class SubscriptionService {
             return;
 
         // 获取用户的默认channel
-        Example example = new Example(Settings.class);
-        Example.Criteria criteria = example.createCriteria();
-        example.selectProperties("notificationWatching");
-        criteria.andEqualTo("user", subscription.getUser());
-        int channel = settingsMapper.selectOneByExample(example).getNotificationWatching();
+        int channel = defaultChannel(subscription.getUser(), "notificationWatching");
 
         // 添加到 watch订阅表
         subscription.setChannel(channel);
-        subscriptionMapper.insert(subscription);
+        subscriptionRepositoryMapper.insert(subscription);
     }
 
     // watch 更新
@@ -40,11 +41,39 @@ public class SubscriptionService {
         // 如果type为0, 则为删除
         if (subscription.getType() == 0) {
             subscription.setType(null);
-            subscriptionMapper.delete(subscription);
+            subscriptionRepositoryMapper.delete(subscription);
         } else {
-            subscriptionMapper.updateByPrimaryKeySelective(subscription);
+            subscriptionRepositoryMapper.updateByPrimaryKeySelective(subscription);
         }
     }
 
+    // issue 创建
+    public void createIssue(SubscriptionIssue subscription) {
+        // 默认channel
+        int channel = defaultChannel(subscription.getUser(), "notificationParticipating");
+
+        subscription.setChannel(channel);
+        subscriptionIssueMapper.insert(subscription);
+    }
+
+    // issue 更新
+    public void updateIssue(SubscriptionIssue subscription) {
+        if (subscription.getChannel() == 0) {
+            subscription.setChannel(null);
+            subscriptionIssueMapper.delete(subscription);
+        } else {
+            subscriptionIssueMapper.updateByPrimaryKeySelective(subscription);  // todo: 复合主键有没有问题?
+        }
+    }
+
+
+    // 获取用户默认的channel
+    private int defaultChannel(Integer user, String type) {
+        Example example = new Example(Settings.class);
+        Example.Criteria criteria = example.createCriteria();
+        example.selectProperties(type);
+        criteria.andEqualTo("user", user);
+        return settingsMapper.selectOneByExample(example).getNotificationWatching();
+    }
 
 }// end

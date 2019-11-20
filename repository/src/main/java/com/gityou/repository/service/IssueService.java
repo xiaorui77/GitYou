@@ -4,16 +4,19 @@ package com.gityou.repository.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gityou.common.entity.PageResult;
-import com.gityou.repository.client.UserClient;
-import com.gityou.repository.mapper.IssueCommentMapper;
-import com.gityou.repository.mapper.IssueMapper;
-import com.gityou.repository.mapper.RepositoryMapper;
+import com.gityou.common.entity.ResponseResult;
 import com.gityou.common.pojo.Issue;
 import com.gityou.common.pojo.IssueComment;
 import com.gityou.common.pojo.Repository;
 import com.gityou.common.pojo.User;
+import com.gityou.repository.client.UserClient;
+import com.gityou.repository.mapper.IssueCommentMapper;
+import com.gityou.repository.mapper.IssueMapper;
+import com.gityou.repository.mapper.RepositoryMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.HashSet;
@@ -34,6 +37,10 @@ public class IssueService {
 
     @Autowired
     private IssueCommentMapper issueCommentMapper;
+
+    @Autowired
+    private RabbitTemplate mq;
+
 
     // 根据repository获取
     public PageResult<Issue> issuePage(String user, String repository, Integer page) {
@@ -126,9 +133,35 @@ public class IssueService {
         issue.setNumber(issueNum);
         issue.setCreateTime((int) (System.currentTimeMillis() / 1000));
 
-        if (issueMapper.insertSelective(issue) == 1)
-            return repositoryMapper.increase(issue.getRepository(), "issue_num", 1) == 1;
+        if (issueMapper.insertSelective(issue) == 1) {
+            if (repositoryMapper.increase(issue.getRepository(), "issue_num", 1) == 1) {
+                mq.convertAndSend("repository.issue", "issue.create", issue);
+                return true;
+            }
+        }
         return false;
+    }
+
+    // 创建评论
+    @Transactional
+    public ResponseResult issueCommentCreate(IssueComment issueComment) {
+        Long issueId = issueComment.getIssue();
+        Issue issue = issueMapper.selectByPrimaryKey(issueId);
+
+        if (issue.getResolved())
+            return ResponseResult.fail("该issue已关闭!");
+
+        // 发出 issue更新 消息
+        issueComment.setId(issue.getNextComment());
+        issueComment.setCreateTime((int) (System.currentTimeMillis() / 1000));
+        if (issueCommentMapper.insertSelective(issueComment) == 1) {
+            issueMapper.increase(issue.getId(), "next_comment", 1);
+            // 发送到MQ
+            mq.convertAndSend("repository.issue", "issueComment.create", issueComment);
+            return ResponseResult.ok("发表成功!");
+        } else {
+            return ResponseResult.fail("发表失败!");
+        }
     }
 
 }// end

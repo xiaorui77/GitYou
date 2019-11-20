@@ -4,11 +4,11 @@ package com.gityou.repository.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gityou.common.entity.PageResult;
-import com.gityou.common.entity.RequestResult;
+import com.gityou.common.entity.ResponseResult;
 import com.gityou.common.entity.UserInfo;
+import com.gityou.common.pojo.Repository;
 import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
-import com.gityou.common.pojo.Repository;
 import com.gityou.repository.utils.GitUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -78,23 +78,23 @@ public class RepositoryService {
     }
 
     // 创建仓库
-    public RequestResult createRepository(Repository repository) {
+    public ResponseResult createRepository(Repository repository) {
         // 验证登录
         UserInfo loginUser = LoginInterceptor.getLoginUser();
         if (loginUser == null)
-            return RequestResult.build(401, "用户未登录");
+            return ResponseResult.build(401, "用户未登录");
 
         Integer userId = loginUser.getId();
         if (!userId.equals(repository.getUserId()))
-            return RequestResult.build(401, "登录的用户不一致");
+            return ResponseResult.build(401, "登录的用户不一致");
 
         // 判读name不能为空
         if (StringUtils.isBlank(repository.getName()) || repository.getName().length() > 50)
-            return RequestResult.build(401, "仓库名不合法");
+            return ResponseResult.build(401, "仓库名不合法");
 
         // name是否可用
         if (hasName(repository.getName()))
-            return RequestResult.build(401, "仓库已存在");
+            return ResponseResult.build(401, "仓库已存在");
 
 
         repository.setUsername(loginUser.getUsername());
@@ -104,31 +104,31 @@ public class RepositoryService {
 
         if (gitUtils.createNewRepository(repository.getUsername(), repository.getName())) {
             repositoryMapper.insertSelective(repository);
-            return RequestResult.ok(repository);
+            return ResponseResult.ok(repository);
         } else {
-            return RequestResult.build(400, "创建失败");
+            return ResponseResult.build(400, "创建失败");
         }
 
     }
 
     // 导入仓库
-    public RequestResult importRepository(Repository repository, String clone) {
+    public ResponseResult importRepository(Repository repository, String clone) {
         // 验证登录
         UserInfo loginUser = LoginInterceptor.getLoginUser();
         if (loginUser == null)
-            return RequestResult.build(401, "用户未登录");
+            return ResponseResult.build(401, "用户未登录");
 
         Integer userId = loginUser.getId();
         if (!userId.equals(repository.getUserId()))
-            return RequestResult.build(401, "登录的用户不一致");
+            return ResponseResult.build(401, "登录的用户不一致");
 
         // 判读name不能为空
         if (StringUtils.isBlank(repository.getName()) || repository.getName().length() > 50)
-            return RequestResult.build(401, "仓库名不合法");
+            return ResponseResult.build(401, "仓库名不合法");
 
         // name是否可用
         if (hasName(repository.getName()))
-            return RequestResult.build(401, "仓库已存在");
+            return ResponseResult.build(401, "仓库已存在");
 
 
         repository.setUsername(loginUser.getUsername());
@@ -138,9 +138,9 @@ public class RepositoryService {
 
         if (gitUtils.cloneRepository(repository.getUsername(), repository.getName(), clone)) {
             repositoryMapper.insertSelective(repository);
-            return RequestResult.ok(repository);
+            return ResponseResult.ok(repository);
         } else {
-            return RequestResult.build(400, "导入仓库失败");
+            return ResponseResult.build(400, "导入仓库失败");
         }
 
     }
@@ -156,7 +156,7 @@ public class RepositoryService {
     }
 
     // 是否已经存在Repository
-    public Boolean hasName(String name) {
+    private Boolean hasName(String name) {
         return name.equals(repositoryMapper.hasName(name));
     }
 

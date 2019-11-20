@@ -14,9 +14,7 @@ public interface RepositoryMapper extends Mapper<Repository> {
     @Select("select id from repository where username = #{user} AND name = #{repository}")
     Long queryId(String user, String repository);
 
-    /*
-     * 递增 递减
-     * */
+    // 递增 递减
     @Update("update repository set `${field}` = `${field}` + #{value} where id = #{repository}")
     Integer increase(Long repository, String field, Integer value);
 

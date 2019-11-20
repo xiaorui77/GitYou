@@ -1,7 +1,7 @@
 package com.gityou.repository.controller;
 
 import com.gityou.common.entity.PageResult;
-import com.gityou.common.entity.RequestResult;
+import com.gityou.common.entity.ResponseResult;
 import com.gityou.common.pojo.Repository;
 import com.gityou.repository.service.RepositoryService;
 import org.springframework.http.ResponseEntity;
@@ -77,8 +77,8 @@ public class RepositoryController {
      * 创建 Git 仓库
      * */
     @PostMapping
-    public ResponseEntity<RequestResult> createRepository(Repository repository) {
-        RequestResult result = repoService.createRepository(repository);
+    public ResponseEntity<ResponseResult> createRepository(Repository repository) {
+        ResponseResult result = repoService.createRepository(repository);
         if (result.getCode() == 200)
             return ResponseEntity.ok(result);
         else
@@ -88,8 +88,8 @@ public class RepositoryController {
     /* 导入 仓库
      * */
     @PostMapping("import")
-    public ResponseEntity<RequestResult> importRepository(Repository repository, String clone) {
-        RequestResult result = repoService.importRepository(repository, clone);
+    public ResponseEntity<ResponseResult> importRepository(Repository repository, String clone) {
+        ResponseResult result = repoService.importRepository(repository, clone);
         if (result.getCode() == 200)
             return ResponseEntity.ok(result);
         else
