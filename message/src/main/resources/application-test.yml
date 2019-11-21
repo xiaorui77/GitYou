@@ -34,3 +34,8 @@ gityou:
     cookieName: user-identity    # cookie的名称
 
   repositoryPath: /tmp/gityou/repository
+
+  email:
+    host: smtp.yeah.net
+    username: gityou@yeah.net
+    password: 123456cyt

@@ -10,6 +10,7 @@ public class Message {
     private Long id;
     private Integer user;
     private Long repository;
+    private Long target;
     private String content;
 
     private Integer type;
@@ -39,6 +40,14 @@ public class Message {
 
     public void setRepository(Long repository) {
         this.repository = repository;
+    }
+
+    public Long getTarget() {
+        return target;
+    }
+
+    public void setTarget(Long target) {
+        this.target = target;
     }
 
     public String getContent() {
