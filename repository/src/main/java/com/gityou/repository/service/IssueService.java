@@ -123,6 +123,7 @@ public class IssueService {
 
 
     // 创建Issue
+    @Transactional
     public Boolean issueCreate(Issue issue) {
         Example example = new Example(Repository.class);
         Example.Criteria criteria = example.createCriteria();
