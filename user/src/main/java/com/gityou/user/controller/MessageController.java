@@ -10,12 +10,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("message")
 public class MessageController {
     @Autowired
     private MessageService messageService;
 
+    @GetMapping
+    public ResponseEntity<List> messageRepository(Integer user) {
+        List result = messageService.messageRepository(user);
+        if (result == null)
+            return ResponseEntity.badRequest().build();
+        else
+            return ResponseEntity.ok(result);
+    }
 
     @GetMapping("page")
     public ResponseEntity<PageResult> messagePage(

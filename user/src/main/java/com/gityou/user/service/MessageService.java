@@ -19,6 +19,14 @@ public class MessageService {
     @Autowired
     private MessageMapper messageMapper;
 
+    // 消息所涉及的repository
+    public List messageRepository(Integer userId) {
+        UserInfo loginUser = LoginInterceptor.getLoginUser();
+        if (loginUser == null || !loginUser.getId().equals(userId))
+            return null;
+
+        return messageMapper.queryRepositories(userId);
+    }
 
     // 分页查询
     public PageResult messagePage(Integer userId, Integer page, Integer status, Integer type) {
