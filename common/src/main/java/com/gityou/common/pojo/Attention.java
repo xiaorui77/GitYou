@@ -2,9 +2,10 @@ package com.gityou.common.pojo;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-@Table(name = "star")
-public class Star {
+@Table(name = "attention")
+public class Attention {
     @Id
     private Integer user;
     @Id
@@ -14,6 +15,14 @@ public class Star {
     private Integer watchTime;
     private Boolean star;
     private Integer starTime;
+    private Boolean fork;
+    private Integer forkTime;
+
+    @Transient
+    private String username;
+    @Transient
+    private String avatar;
+
 
     public Integer getUser() {
         return user;
@@ -62,5 +71,38 @@ public class Star {
 
     public void setStarTime(Integer starTime) {
         this.starTime = starTime;
+    }
+
+    public Boolean getFork() {
+        return fork;
+    }
+
+    public void setFork(Boolean fork) {
+        this.fork = fork;
+    }
+
+    public Integer getForkTime() {
+        return forkTime;
+    }
+
+    public void setForkTime(Integer forkTime) {
+        this.forkTime = forkTime;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }
