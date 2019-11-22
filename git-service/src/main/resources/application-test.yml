@@ -1,0 +1,40 @@
+server:
+  port: 7061
+
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.22.137:3306/gityou?characterEncoding=utf-8&userAffectRows=true&serverTimezone=GMT%2B8
+    username: gityou
+    password: gityou
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  rabbitmq:
+    host: 192.168.22.137
+    port: 5672
+    username: gityou
+    password: gityou
+    virtual-host: gityou
+    publisher-confirms: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:7050/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 5        # 心跳时间
+    lease-expiration-duration-in-seconds: 15    # 过期时间
+
+    # 元数据
+    metadata-map:
+      machineId: 1
+      loadWeight: 100
+
+gityou:
+  jwt:
+    pubKeyPath: D:/tmp/gityou/rsa.pub     # 公钥地址
+    cookieName: user-identity    # cookie的名称
+
+  repositoryPath: D:\tmp\gityou\repository
+  repositorySuffix: .git
+
+

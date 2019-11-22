@@ -9,12 +9,12 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 
 
-@WebServlet(name = "gitServlet", urlPatterns = {"/*"},
+@WebServlet(name = "gityouServlet", urlPatterns = {"/*"},
         loadOnStartup = 1, initParams = {
         @WebInitParam(name = "base-path", value = "D:\\tmp\\gityou\\repository\\"),
         @WebInitParam(name = "export-all", value = "true")
 })
-public class GitServlet extends org.eclipse.jgit.http.server.GitServlet {
+public class GityouServlet extends org.eclipse.jgit.http.server.GitServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         setRepositoryResolver(new GitHttpResolver());

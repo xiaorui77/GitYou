@@ -1,5 +1,7 @@
 package com.gityou.common.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -25,6 +27,7 @@ public class Repository {
     private Integer fork;
     private String defaultBranch;
     private Timestamp updateTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
     public Long getId() {
