@@ -1,7 +1,10 @@
 package com.gityou.common.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -10,12 +13,14 @@ import java.sql.Timestamp;
 @Table(name = "repository")
 public class Repository {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     // 保证insert时能够返回id
     private Long id;
     private Integer userId;
     private String username;
     private String name;
     private String description;
 
+    @JsonIgnore
     private Long machine;
     private Byte privacy;
     private Integer type;

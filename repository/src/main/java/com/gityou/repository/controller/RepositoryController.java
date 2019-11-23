@@ -73,10 +73,10 @@ public class RepositoryController {
             return ResponseEntity.ok(result);
     }
 
-    /*
+    /**
      * 创建 Git 仓库
-     * */
-    @PostMapping
+     */
+    @PostMapping("new")
     public ResponseEntity<ResponseResult> createRepository(Repository repository) {
         ResponseResult result = repoService.createRepository(repository);
         if (result.getCode() == 200)

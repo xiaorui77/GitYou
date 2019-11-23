@@ -1,7 +1,7 @@
 package com.gityou.git.config;
 
 
-import com.gityou.git.listener.GitListener;
+import com.gityou.git.listener.NewRepositoryListener;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -24,6 +24,8 @@ public class RabbitReceiver {
     @Value("${eureka.instance.metadata-map.machineId}")
     private String machineId;
 
+    @Autowired
+    private NewRepositoryListener newRepositoryListener;
 
     @Bean
     public DirectExchange directExchange() {
@@ -55,7 +57,7 @@ public class RabbitReceiver {
         container.setQueues(directQueue()); //设置要监听的队列
         container.setExposeListenerChannel(true);
         container.setAcknowledgeMode(AcknowledgeMode.MANUAL); // 确认模式
-        container.setMessageListener(new GitListener());
+        container.setMessageListener(newRepositoryListener);    // 仓库创建Listener
         return container;
     }
 
