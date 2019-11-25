@@ -12,6 +12,7 @@ import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.utils.GitUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,16 +72,27 @@ public class RepositoryService {
         return new PageResult<Repository>(result.getTotal(), result.getPageNum(), repositories);
     }
 
-    // 流行
-    public List<Repository> queryPopularRepos(Integer id) {
-        // Todo
-        return new ArrayList<>();
+    // 某用户的首页展示仓库
+    public List<Repository> queryPopularRepos(String username, int num) {
+        Example example = new Example(Repository.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username", username);
+        example.setOrderByClause("score desc");
+        return repositoryMapper.selectByExampleAndRowBounds(example, new RowBounds(0, num));
     }
 
-    // 详情
-    Repository queryRepository() {
-        // Todo
-        return new Repository();
+    // 根据id 查询Repository 基本信息
+    public Repository queryRepository(Long repositoryId) {
+        return repositoryMapper.selectByPrimaryKey(repositoryId);
+    }
+
+    // 根据用户名,仓库名 查询Repository 基本信息
+    public Repository queryRepositoryByName(String user, String name) {
+        Example example = new Example(Repository.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username", user);
+        criteria.andEqualTo("name", name);
+        return repositoryMapper.selectOneByExample(example);
     }
 
     // 创建仓库
@@ -129,16 +141,6 @@ public class RepositoryService {
             rabbitTemplate.convertAndSend("git.service", "import." + location.get(i), JsonUtils.serialize(repository));
 
         return ResponseResult.ok(repository);
-    }
-
-
-    // 查询Repository 基本信息
-    public Repository queryRepositoryByName(String user, String name) {
-        Example example = new Example(Repository.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("username", user);
-        criteria.andEqualTo("name", name);
-        return repositoryMapper.selectOneByExample(example);
     }
 
 

@@ -40,31 +40,33 @@ public class RepositoryController {
             return ResponseEntity.ok(repositories);
     }
 
-    /*
-     * 根据user查询 popular Repository
-     * */
+    /**
+     * 根据username查询 用户的popular仓库
+     * 默认查询8条
+     */
     @GetMapping("popular")
-    public ResponseEntity<List<Repository>> queryPopularRepos(@RequestParam Integer userId) {
-        List<Repository> repositories = repoService.queryPopularRepos(userId);
+    public ResponseEntity<List<Repository>> queryPopularRepos(@RequestParam String user, @RequestParam(defaultValue = "8") Integer num) {
+        List<Repository> repositories = repoService.queryPopularRepos(user, num);
         if (repositories == null)
             return ResponseEntity.notFound().build();
         else
             return ResponseEntity.ok(repositories);
     }
 
-    /*
-     * 根据id查询单个 Repository
-     * 详细信息
-     * */
+    /**
+     * 根据仓库id 查询单个Repository信息
+     */
     @GetMapping
-    public ResponseEntity<Repository> queryRepository(@RequestParam Long id) {
-        // Todo
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Repository> queryRepository(Long repository) {
+        Repository result = repoService.queryRepository(repository);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
     }
 
     /**
-     * 根据 user, name查询单个 Repository
-     * 自己的仓库
+     * 根据用户名,仓库名 查询单个Repository信息
      */
     @GetMapping("name")
     public ResponseEntity<Repository> queryRepositoryByName(String user, String name) {
