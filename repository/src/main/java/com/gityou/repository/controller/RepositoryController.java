@@ -22,17 +22,18 @@ public class RepositoryController {
     }
 
 
-    /*
+    /**
      * 根据user查询 Repository
-     * */
+     */
     @GetMapping("page")
     public ResponseEntity<PageResult<Repository>> queryRepos(
             @RequestParam String user,
-            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "0") Integer type,
             @RequestParam(defaultValue = "0") Integer language,
             @RequestParam(required = false) String keyword) {
-        PageResult<Repository> repositories = repoService.queryRepos(user, page, type, language, keyword);
+        page = page < 1 ? 1 : page;
+        PageResult<Repository> repositories = repoService.queryRepos(user, page - 1, type, language, keyword);
         if (repositories == null)
             return ResponseEntity.notFound().build();
         else
@@ -61,9 +62,10 @@ public class RepositoryController {
         return ResponseEntity.notFound().build();
     }
 
-    /* 根据 user, name查询单个 Repository
+    /**
+     * 根据 user, name查询单个 Repository
      * 自己的仓库
-     * */
+     */
     @GetMapping("name")
     public ResponseEntity<Repository> queryRepositoryByName(String user, String name) {
         Repository result = repoService.queryRepositoryByName(user, name);
@@ -73,10 +75,10 @@ public class RepositoryController {
             return ResponseEntity.ok(result);
     }
 
-    /*
+    /**
      * 创建 Git 仓库
-     * */
-    @PostMapping
+     */
+    @PostMapping("new")
     public ResponseEntity<ResponseResult> createRepository(Repository repository) {
         ResponseResult result = repoService.createRepository(repository);
         if (result.getCode() == 200)
@@ -85,11 +87,12 @@ public class RepositoryController {
             return ResponseEntity.status(result.getCode()).body(result);
     }
 
-    /* 导入 仓库
-     * */
+    /**
+     * 导入 仓库
+     */
     @PostMapping("import")
-    public ResponseEntity<ResponseResult> importRepository(Repository repository, String clone) {
-        ResponseResult result = repoService.importRepository(repository, clone);
+    public ResponseEntity<ResponseResult> importRepository(Repository repository) {
+        ResponseResult result = repoService.importRepository(repository);
         if (result.getCode() == 200)
             return ResponseEntity.ok(result);
         else

@@ -7,10 +7,13 @@ import com.gityou.common.entity.PageResult;
 import com.gityou.common.entity.ResponseResult;
 import com.gityou.common.entity.UserInfo;
 import com.gityou.common.pojo.Repository;
+import com.gityou.common.utils.JsonUtils;
 import com.gityou.repository.interceptor.LoginInterceptor;
 import com.gityou.repository.mapper.RepositoryMapper;
 import com.gityou.repository.utils.GitUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -23,6 +26,9 @@ import java.util.Objects;
 public class RepositoryService {
     private final RepositoryMapper repositoryMapper;
     private final GitUtils gitUtils;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public RepositoryService(RepositoryMapper repositoryMapper, GitUtils gitUtils) {
         this.repositoryMapper = repositoryMapper;
@@ -79,70 +85,50 @@ public class RepositoryService {
 
     // 创建仓库
     public ResponseResult createRepository(Repository repository) {
-        // 验证登录
+        // 验证登录, 仓库名是否可用, 设置repository信息
         UserInfo loginUser = LoginInterceptor.getLoginUser();
-        if (loginUser == null)
-            return ResponseResult.build(401, "用户未登录");
+        ResponseResult verify = verify(loginUser, repository);
+        if (verify != null)
+            return verify;
 
-        Integer userId = loginUser.getId();
-        if (!userId.equals(repository.getUserId()))
-            return ResponseResult.build(401, "登录的用户不一致");
+        // 计算存放位置
+        List<Integer> location = storageLocation();
+        repository.setMachine(Long.valueOf(location.get(0)));
 
-        // 判读name不能为空
-        if (StringUtils.isBlank(repository.getName()) || repository.getName().length() > 50)
-            return ResponseResult.build(401, "仓库名不合法");
+        // 插入数据库
+        if (repositoryMapper.insertSelective(repository) != 1)
+            return ResponseResult.fail("创建失败, 未知错误!");
 
-        // name是否可用
-        if (hasName(repository.getName()))
-            return ResponseResult.build(401, "仓库已存在");
+        // 发送创建消息 MQ
+        for (int i = 1; i < location.size(); i++)
+            rabbitTemplate.convertAndSend("git.service", "new." + location.get(i), JsonUtils.serialize(repository));
 
-
-        repository.setUsername(loginUser.getUsername());
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        repository.setCreateTime(timestamp);
-        repository.setUpdateTime(timestamp);
-
-        if (gitUtils.createNewRepository(repository.getUsername(), repository.getName())) {
-            repositoryMapper.insertSelective(repository);
-            return ResponseResult.ok(repository);
-        } else {
-            return ResponseResult.build(400, "创建失败");
-        }
-
+        return ResponseResult.ok(repository);
     }
 
     // 导入仓库
-    public ResponseResult importRepository(Repository repository, String clone) {
-        // 验证登录
+    public ResponseResult importRepository(Repository repository) {
+        // 验证登录, 仓库名是否可用, 设置repository信息
         UserInfo loginUser = LoginInterceptor.getLoginUser();
-        if (loginUser == null)
-            return ResponseResult.build(401, "用户未登录");
+        ResponseResult verify = verify(loginUser, repository);
+        if (verify != null)
+            return verify;
 
-        Integer userId = loginUser.getId();
-        if (!userId.equals(repository.getUserId()))
-            return ResponseResult.build(401, "登录的用户不一致");
+        // 计算存放位置
+        List<Integer> location = storageLocation();
+        repository.setMachine(Long.valueOf(location.get(0)));
 
-        // 判读name不能为空
-        if (StringUtils.isBlank(repository.getName()) || repository.getName().length() > 50)
-            return ResponseResult.build(401, "仓库名不合法");
+        // 插入数据库
+        if (repository.getImportFrom() == null)
+            return ResponseResult.fail("导入失败, 没有指定要导入的url");
+        if (repositoryMapper.insertSelective(repository) != 1)
+            return ResponseResult.fail("创建失败, 未知错误!");
 
-        // name是否可用
-        if (hasName(repository.getName()))
-            return ResponseResult.build(401, "仓库已存在");
+        // 发送创建消息 MQ
+        for (int i = 1; i < location.size(); i++)
+            rabbitTemplate.convertAndSend("git.service", "import." + location.get(i), JsonUtils.serialize(repository));
 
-
-        repository.setUsername(loginUser.getUsername());
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        repository.setCreateTime(timestamp);
-        repository.setUpdateTime(timestamp);
-
-        if (gitUtils.cloneRepository(repository.getUsername(), repository.getName(), clone)) {
-            repositoryMapper.insertSelective(repository);
-            return ResponseResult.ok(repository);
-        } else {
-            return ResponseResult.build(400, "导入仓库失败");
-        }
-
+        return ResponseResult.ok(repository);
     }
 
 
@@ -155,9 +141,56 @@ public class RepositoryService {
         return repositoryMapper.selectOneByExample(example);
     }
 
+
+    // 验证name是否合法
+    private ResponseResult verify(UserInfo loginUser, Repository repository) {
+        // 验证登录
+        if (loginUser == null)
+            return ResponseResult.build(401, "用户未登录");
+
+        Integer userId = loginUser.getId();
+        if (!userId.equals(repository.getUserId()))
+            return ResponseResult.build(401, "登录的用户不一致");
+
+        // 判读name不能为空
+        if (StringUtils.isBlank(repository.getName()) || repository.getName().length() > 50)
+            return ResponseResult.fail("仓库名不合法");
+
+        // name是否可用
+        if (hasName(repository.getName()))
+            return ResponseResult.fail("仓库已存在");
+
+
+        // 设置仓库信息
+        repository.setUsername(loginUser.getUsername());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        repository.setCreateTime(timestamp);
+        repository.setUpdateTime(timestamp);
+
+        return null;
+    }
+
     // 是否已经存在Repository
     private Boolean hasName(String name) {
         return name.equals(repositoryMapper.hasName(name));
+    }
+
+    // 计算存放位置
+    private List<Integer> storageLocation() {
+        List<Integer> location = new ArrayList<>(4);
+
+        int[] all = {1, 2};
+        // 假设 为1,2号
+        location.add(0);
+
+        int a = 0;
+        for (int i = 0; i < 2; i++) {
+            a |= all[i] << 10 * i;
+            location.add(all[i]);
+        }
+        location.set(0, a);
+
+        return location;
     }
 
 }// end

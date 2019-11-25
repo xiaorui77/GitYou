@@ -1,7 +1,10 @@
 package com.gityou.common.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
@@ -10,25 +13,31 @@ import java.sql.Timestamp;
 @Table(name = "repository")
 public class Repository {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     // 保证insert时能够返回id
     private Long id;
     private Integer userId;
     private String username;
     private String name;
     private String description;
 
+    @JsonIgnore
     private Long machine;
+    private Long forkFrom;  // 如果不是fork， 则为0
+    private String importFrom;  // 如果不是import， 则为空字符串
     private Byte privacy;
     private Integer type;
     private Integer language;
+    private String defaultBranch;
+
 
     private Integer issueNum;
     private Integer watch;
     private Integer star;
     private Integer fork;
-    private String defaultBranch;
     private Timestamp updateTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
+
 
     public Long getId() {
         return id;
@@ -78,6 +87,22 @@ public class Repository {
         this.machine = machine;
     }
 
+    public Long getForkFrom() {
+        return forkFrom;
+    }
+
+    public void setForkFrom(Long forkFrom) {
+        this.forkFrom = forkFrom;
+    }
+
+    public String getImportFrom() {
+        return importFrom;
+    }
+
+    public void setImportFrom(String importFrom) {
+        this.importFrom = importFrom;
+    }
+
     public Byte getPrivacy() {
         return privacy;
     }
@@ -100,6 +125,14 @@ public class Repository {
 
     public void setLanguage(Integer language) {
         this.language = language;
+    }
+
+    public String getDefaultBranch() {
+        return defaultBranch;
+    }
+
+    public void setDefaultBranch(String defaultBranch) {
+        this.defaultBranch = defaultBranch;
     }
 
     public Integer getIssueNum() {
@@ -132,14 +165,6 @@ public class Repository {
 
     public void setFork(Integer fork) {
         this.fork = fork;
-    }
-
-    public String getDefaultBranch() {
-        return defaultBranch;
-    }
-
-    public void setDefaultBranch(String defaultBranch) {
-        this.defaultBranch = defaultBranch;
     }
 
     public Timestamp getUpdateTime() {
