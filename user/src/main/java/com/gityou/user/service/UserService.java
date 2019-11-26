@@ -1,8 +1,10 @@
 package com.gityou.user.service;
 
 
-import com.gityou.user.mapper.UserMapper;
+import com.gityou.common.mapper.EmailMapper;
+import com.gityou.common.pojo.Email;
 import com.gityou.common.pojo.User;
+import com.gityou.user.mapper.UserMapper;
 import com.gityou.user.util.CodecUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ import java.util.Set;
 public class UserService {
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private EmailMapper emailMapper;
 
 
     // 登录验证 User 每次都要修改salt? 暂时保留多地方登录
@@ -55,19 +60,32 @@ public class UserService {
 
     // 根据email获取user信息
     public User queryByEmail(String email) {
-        Example example = new Example(User.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("email", email);
+        User record = new User();
+        record.setEmail(email);
 
-        return userMapper.selectOneByExample(example);
+        record = userMapper.selectOne(record);
+        if (record != null)
+            return record;
+
+        // 从email表中查询
+        Email userEmail = new Email();
+        userEmail.setEmail(email);
+
+        userEmail = emailMapper.selectOne(userEmail);
+        if (userEmail == null)
+            return null;
+
+        return userMapper.selectByPrimaryKey(userEmail.getUser());
     }
 
+    // 根据emails 查询用户名
     @Transactional
     public Map<String, String> queryUsersByEmail(Set<String> emails) {
         Map<String, String> result = new HashMap<>();
         if (emails == null || emails.isEmpty())
             return result;
 
+        // 先从uesr表中查询
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("email", emails);
@@ -76,7 +94,16 @@ public class UserService {
         List<User> users = userMapper.selectByExample(example);
         users.forEach(e -> {
             result.put(e.getEmail(), e.getUsername());
+            emails.remove(e.getEmail());
         });
+
+        // user表中未找到的去email表查询
+        List<User> remainingUsers = userMapper.queryUsersByEmails(emails);
+        remainingUsers.forEach(e -> {
+            result.put(e.getEmail(), e.getUsername());
+            emails.remove(e.getEmail());
+        });
+
         return result;
     }
 
@@ -110,4 +137,5 @@ public class UserService {
         users.forEach(e -> result.put(e.getId(), e));
         return result;
     }
+
 }// end

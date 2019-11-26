@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gityou.user.mapper.UserMapper">
+
+    <!-- 根据多个邮箱查询多个用户名 -->
+    <select id="queryUsersByEmails" resultType="com.gityou.common.pojo.User">
+        SELECT user.username, user.email
+        FROM user, email
+        WHERE user.id = email.user
+        AND email.email IN
+        <foreach collection="emails" item="email" index="index" open="(" close=")" separator=",">
+            #{email}
+        </foreach>
+    </select>
+</mapper>

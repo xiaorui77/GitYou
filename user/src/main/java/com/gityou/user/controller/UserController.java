@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Set;
 
-/*
+/**
  * User Controller
- * */
+ */
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -19,9 +19,9 @@ public class UserController {
     UserService userService;
 
 
-    /*
+    /**
      * 根据id获取用户信息
-     * */
+     */
     @GetMapping
     public ResponseEntity<User> queryUser(Integer id) {
         User user = userService.queryUser(id);
@@ -31,9 +31,9 @@ public class UserController {
             return ResponseEntity.ok(user);
     }
 
-    /*
+    /**
      * 根据username 获取用户信息
-     * */
+     */
     @RequestMapping("byUsername")
     public ResponseEntity<User> queryUserByUsername(@RequestParam String username) {
         User user = userService.queryByUsername(username);
@@ -43,9 +43,9 @@ public class UserController {
             return ResponseEntity.ok(user);
     }
 
-    /*
-     * 根据email获取username
-     * */
+    /**
+     * 根据email获取用户信息
+     */
     @RequestMapping("byEmail")
     public ResponseEntity<User> queryUserByEmail(@RequestParam String email) {
         User user = userService.queryByEmail(email);
@@ -55,6 +55,9 @@ public class UserController {
             return ResponseEntity.ok(user);
     }
 
+    /**
+     * 根据emails查询多个用户名
+     */
     @PostMapping("queryUsersByEmail")
     public ResponseEntity<Map<String, String>> queryUsersByEmail(@RequestBody Set<String> emails) {
         Map<String, String> users = userService.queryUsersByEmail(emails);
@@ -64,9 +67,9 @@ public class UserController {
             return ResponseEntity.ok(users);
     }
 
-    /*
-     * 根据id获取 username
-     * */
+    /**
+     * 根据ids获取多个用户名
+     */
     @PostMapping("queryNames")
     public ResponseEntity<Map<Integer, String>> queryNames(@RequestBody Set<Integer> ids) {
         Map<Integer, String> users = userService.queryNames(ids);
@@ -76,9 +79,9 @@ public class UserController {
             return ResponseEntity.ok(users);
     }
 
-    /*
-     * 根据id获取users
-     * */
+    /**
+     * 根据ids获取多个用户信息
+     */
     @PostMapping("users")
     public ResponseEntity<Map<Integer, User>> queryUsers(@RequestBody Set<Integer> ids) {
         Map<Integer, User> users = userService.queryUsers(ids);
