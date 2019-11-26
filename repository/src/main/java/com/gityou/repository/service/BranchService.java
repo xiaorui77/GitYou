@@ -1,12 +1,14 @@
 package com.gityou.repository.service;
 
 
-import com.gityou.repository.utils.GitUtils;
-import com.gityou.repository.client.UserClient;
 import com.gityou.common.entity.BranchResult;
+import com.gityou.common.pojo.Branch;
+import com.gityou.repository.client.UserClient;
 import com.gityou.repository.mapper.BranchMapper;
+import com.gityou.repository.utils.GitUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +39,15 @@ public class BranchService {
         // 将结果中user的email改为username
         branches.forEach(e -> e.setAuthor(users.get(e.getAuthor())));
         return branches;
+    }
+
+    // 获取branch列表 从数据库中
+    public List<Branch> queryList(Long repositoryId) {
+        Example example = new Example(Branch.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("repository", repositoryId);
+
+        return branchMapper.selectByExample(example);
     }
 
 }// end

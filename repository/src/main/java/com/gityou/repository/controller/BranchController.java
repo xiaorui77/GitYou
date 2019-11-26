@@ -2,6 +2,7 @@ package com.gityou.repository.controller;
 
 
 import com.gityou.common.entity.BranchResult;
+import com.gityou.common.pojo.Branch;
 import com.gityou.repository.service.BranchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,25 @@ public class BranchController {
     @Autowired
     private BranchService branchService;
 
-    /* 根据仓库查询branch
-     * */
+    /**
+     * 根据用户名,仓库名 查询branch
+     */
     @GetMapping("list")
     public ResponseEntity<List<BranchResult>> queryList(String user, String name) {
         List<BranchResult> result = branchService.queryList(user, name);
+        if (result == null)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok(result);
+    }
+
+
+    /**
+     * 根据仓库id 查询branch
+     */
+    @GetMapping("all")
+    public ResponseEntity<List<Branch>> queryList(Long repository) {
+        List result = branchService.queryList(repository);
         if (result == null)
             return ResponseEntity.notFound().build();
         else

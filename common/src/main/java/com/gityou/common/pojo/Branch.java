@@ -2,15 +2,15 @@ package com.gityou.common.pojo;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
 
-@Table(name = "brand")
+@Table(name = "branch")
 public class Branch {
     @Id
     private Long id;
-    private Long repoId;
+    private Long repository;
     private String name;
-    private Timestamp createTime;
+    private Integer createTime;
+
 
     public Long getId() {
         return id;
@@ -20,12 +20,12 @@ public class Branch {
         this.id = id;
     }
 
-    public Long getRepoId() {
-        return repoId;
+    public Long getRepository() {
+        return repository;
     }
 
-    public void setRepoId(Long repoId) {
-        this.repoId = repoId;
+    public void setRepository(Long repository) {
+        this.repository = repository;
     }
 
     public String getName() {
@@ -36,11 +36,11 @@ public class Branch {
         this.name = name;
     }
 
-    public Timestamp getCreateTime() {
+    public Integer getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Integer createTime) {
         this.createTime = createTime;
     }
 }
