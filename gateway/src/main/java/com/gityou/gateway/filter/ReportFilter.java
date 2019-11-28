@@ -30,9 +30,9 @@ public class ReportFilter extends ZuulFilter {
         RibbonApacheHttpResponse response = (RibbonApacheHttpResponse) requestContext.get("ribbonResponse");
         if (response.getRequestedURI().getPath().equals("/file/list")) {
             if (response.getRequestedURI().getPort() == 7072)
-                System.out.println("实例: 7072");
+                System.out.println("本次使用的实例: 7072");
             else if (response.getRequestedURI().getPort() == 7073)
-                System.out.println("实例: 7073");
+                System.out.println("本次使用的实例: 7073");
         }
         return null;
     }

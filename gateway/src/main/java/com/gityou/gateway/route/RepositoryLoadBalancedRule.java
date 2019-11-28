@@ -38,8 +38,14 @@ public class RepositoryLoadBalancedRule extends AbstractLoadBalancerRule {
             String repositoryName = requestContext.getRequest().getParameter("name");
 
             List<Integer> machines = zuulService.getMachine(username, repositoryName);
+            if (machines.size() == 0)
+                throw new IllegalArgumentException("服务器内部错误或参数不合法!");
 
             List<Server> allServers = lb.getAllServers();
+            List<Server> reachableServers = lb.getReachableServers();
+            System.out.println("所有: " + allServers);
+            System.out.println("可达的: " + reachableServers);
+
             List<Server> reallyServers = new ArrayList<>(machines.size());
 
             // 查找所在的实例
@@ -55,6 +61,9 @@ public class RepositoryLoadBalancedRule extends AbstractLoadBalancerRule {
                     }
                 if (machines.size() == 0) break;
             }
+
+            if (reallyServers.size() == 0)
+                throw new IllegalArgumentException("服务器内部错误: 没有可用的服务器!");
 
             // 随机原则
             int cur = (int) (Math.random() * reallyServers.size());
